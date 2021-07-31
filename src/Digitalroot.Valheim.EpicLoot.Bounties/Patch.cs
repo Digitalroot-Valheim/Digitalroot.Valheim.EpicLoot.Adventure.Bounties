@@ -22,10 +22,10 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       {
         try
         {
-          Log.Trace($"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
+          Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
           if (!Common.Utils.IsObjectDBReady())
           {
-            Log.Debug($"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] ObjectDB not ready - skipping");
+            Log.Debug(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] ObjectDB not ready - skipping");
             return;
           }
 
@@ -33,7 +33,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         }
         catch (Exception e)
         {
-          Log.Error(e);
+          Log.Error(Main.Instance, e);
         }
       }
     }

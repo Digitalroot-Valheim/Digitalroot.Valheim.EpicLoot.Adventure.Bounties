@@ -13,13 +13,14 @@ using System.Reflection;
 namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 {
   [BepInPlugin(Guid, Name, Version)]
-  [BepInDependency(global::EpicLoot.EpicLoot.PluginId, "0.8.0")]
-  public class Main : BaseUnityPlugin
+  [BepInDependency(global::EpicLoot.EpicLoot.PluginId, "0.8.4")]
+  public class Main : BaseUnityPlugin, ITraceableLogging
   {
-    public const string Version = "1.0.3";
+    public const string Version = "1.1.1";
     public const string Name = "Digitalroot EpicLoot Adventure Bounties";
+    // ReSharper disable once MemberCanBePrivate.Global
     public const string Guid = "digitalroot.mods.epicloot.adventure.bounties";
-    public const string Namespace = "Digitalroot.Valheim.EpicLoot.Adventure.Bounties";
+    public const string Namespace = nameof(Digitalroot.Valheim.EpicLoot.Adventure.Bounties);
     private Harmony _harmony;
     public static Main Instance;
     private static List<BountyTargetConfig> Bounties => AdventureDataManager.Config.Bounties.Targets;
@@ -52,7 +53,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       }
       catch (Exception e)
       {
-        Log.Error(e);
+        Log.Error(this, e);
       }
     }
 
@@ -65,19 +66,19 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     {
       if (global::EpicLoot.EpicLoot.IsAdventureModeEnabled())
       {
-        Log.Debug("Adding Bounties to EpicLoot");
+        Log.Debug(Instance, "Adding Bounties to EpicLoot");
 
         foreach (var biome in Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>())
         {
           var bounties = GetBounties(biome);
           if (bounties != null)
           {
-            Log.Debug($"Adding {bounties.Count()} bounties for {biome}");
+            Log.Debug(Instance,$"Adding {bounties.Count()} bounties for {biome}");
             Bounties.AddRange(GetBounties(biome));
           }
           else
           {
-            Log.Debug($"No bounties for {biome}");
+            Log.Debug(Instance,$"No bounties for {biome}");
           }
         }
       }
@@ -85,172 +86,117 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
     private static void ClearBounties()
     {
-      Log.Debug("Removing default bounties");
+      Log.Debug(Instance, "Removing default bounties");
       Bounties.Clear();
     }
 
     private static IEnumerable<BountyTargetConfig> GetBounties(Heightmap.Biome biome)
     {
-      switch (biome)
+      return biome switch
       {
-        case Heightmap.Biome.Meadows:
-          return GetMeadowsBounties();
-        case Heightmap.Biome.BlackForest:
-          return GetBlackForestBounties();
-        case Heightmap.Biome.Swamp:
-          return GetSwampBounties();
-        case Heightmap.Biome.Mountain:
-          return GetMountainBounties();
-        case Heightmap.Biome.Plains:
-          return GetPlainsBounties();
-        case Heightmap.Biome.Ocean:
-          return GetOceanBounties();
-        case Heightmap.Biome.AshLands:
-          return GetAshLandsBounties();
-        case Heightmap.Biome.DeepNorth:
-          return GetDeepNorthBounties();
-        case Heightmap.Biome.Mistlands:
-          return GetMistlandsBounties();
-        case Heightmap.Biome.None:
-        case Heightmap.Biome.BiomesMax:
-        default:
-          return null;
-      }
+        Heightmap.Biome.Meadows => GetMeadowsBounties()
+        , Heightmap.Biome.BlackForest => GetBlackForestBounties()
+        , Heightmap.Biome.Swamp => GetSwampBounties()
+        , Heightmap.Biome.Mountain => GetMountainBounties()
+        , Heightmap.Biome.Plains => GetPlainsBounties()
+        , Heightmap.Biome.Ocean => GetOceanBounties()
+        , Heightmap.Biome.AshLands => GetAshLandsBounties()
+        , Heightmap.Biome.DeepNorth => GetDeepNorthBounties()
+        , Heightmap.Biome.Mistlands => GetMistlandsBounties()
+        , Heightmap.Biome.None => null
+        , Heightmap.Biome.BiomesMax => null
+        , _ => null
+      };
     }
 
     [Conditional("DEBUG")]
     private static void PrintBounties()
     {
-      Log.Trace($"Loaded Bounties: {Bounties.Count}");
-      Log.Trace("*******************************");
+      Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
+      Log.Trace(Instance, "*******************************");
       foreach (var bountyTargetConfig in Bounties)
       {
-        Log.Trace($"TargetID: {bountyTargetConfig.TargetID}");
-        Log.Trace($"Biome: {bountyTargetConfig.Biome}");
-        Log.Trace($"RewardCoins: {bountyTargetConfig.RewardCoins}");
-        Log.Trace($"RewardIron: {bountyTargetConfig.RewardIron}");
-        Log.Trace($"RewardGold: {bountyTargetConfig.RewardGold}");
-        Log.Trace("[Adds]");
-        Log.Trace($"Adds.Count: {bountyTargetConfig.Adds.Count}");
+        Log.Trace(Instance, $"TargetID: {bountyTargetConfig.TargetID}");
+        Log.Trace(Instance, $"Biome: {bountyTargetConfig.Biome}");
+        Log.Trace(Instance, $"RewardCoins: {bountyTargetConfig.RewardCoins}");
+        Log.Trace(Instance, $"RewardIron: {bountyTargetConfig.RewardIron}");
+        Log.Trace(Instance, $"RewardGold: {bountyTargetConfig.RewardGold}");
+        Log.Trace(Instance, "[Adds]");
+        Log.Trace(Instance, $"Adds.Count: {bountyTargetConfig.Adds.Count}");
 
         foreach (var bountyTargetAddConfig in bountyTargetConfig.Adds)
         {
-          Log.Trace($"Add.ID: {bountyTargetAddConfig.ID}");
-          Log.Trace($"Add.Count: {bountyTargetAddConfig.Count}");
+          Log.Trace(Instance, $"Add.ID: {bountyTargetAddConfig.ID}");
+          Log.Trace(Instance, $"Add.Count: {bountyTargetAddConfig.Count}");
         }
 
-        Log.Trace("*******************************");
+        Log.Trace(Instance, "*******************************");
       }
     }
 
     private static int GetCoins(Heightmap.Biome biome, uint add = 0)
     {
-      int value;
-      switch (biome)
+      int value = biome switch
       {
-        case Heightmap.Biome.Meadows:
-          value = 10;
-          break;
-        case Heightmap.Biome.BlackForest:
-          value = 15;
-          break;
-        case Heightmap.Biome.Swamp:
-          value = 20;
-          break;
-        case Heightmap.Biome.Mountain:
-          value = 30;
-          break;
-        case Heightmap.Biome.Plains:
-          value = 35;
-          break;
-        case Heightmap.Biome.Ocean:
-          value = 30;
-          break;
-        case Heightmap.Biome.Mistlands:
-          value = 40;
-          break;
-        case Heightmap.Biome.DeepNorth:
-          value = 50;
-          break;
-        case Heightmap.Biome.AshLands:
-          value = 60;
-          break;
-        case Heightmap.Biome.None:
-        case Heightmap.Biome.BiomesMax:
-        default:
-          value = 1;
-          break;
-      }
+        Heightmap.Biome.Meadows => 10
+        , Heightmap.Biome.BlackForest => 15
+        , Heightmap.Biome.Swamp => 20
+        , Heightmap.Biome.Mountain => 30
+        , Heightmap.Biome.Plains => 35
+        , Heightmap.Biome.Ocean => 30
+        , Heightmap.Biome.Mistlands => 40
+        , Heightmap.Biome.DeepNorth => 50
+        , Heightmap.Biome.AshLands => 60
+        , Heightmap.Biome.None => 1
+        , Heightmap.Biome.BiomesMax => 1
+        , _ => 1
+      };
 
+      // ReSharper disable once RedundantAssignment
       return value += Convert.ToInt16(add);
     }
 
     private static int GetIron(Heightmap.Biome biome, uint add = 0)
     {
-      int value;
-      switch (biome)
+      var value = biome switch
       {
-        case Heightmap.Biome.Meadows:
-          value = 1;
-          break;
-        case Heightmap.Biome.BlackForest:
-          value = 2;
-          break;
-        case Heightmap.Biome.Swamp:
-          value = 3;
-          break;
-        case Heightmap.Biome.Mountain:
-          value = 4;
-          break;
-        case Heightmap.Biome.Plains:
-          value = 5;
-          break;
-        case Heightmap.Biome.Ocean:
-          value = 4;
-          break;
-        case Heightmap.Biome.Mistlands:
-          value = 5;
-          break;
-        case Heightmap.Biome.DeepNorth:
-          value = 6;
-          break;
-        case Heightmap.Biome.AshLands:
-          value = 7;
-          break;
+        Heightmap.Biome.Meadows => 1
+        , Heightmap.Biome.BlackForest => 2
+        , Heightmap.Biome.Swamp => 3
+        , Heightmap.Biome.Mountain => 4
+        , Heightmap.Biome.Plains => 5
+        , Heightmap.Biome.Ocean => 4
+        , Heightmap.Biome.Mistlands => 5
+        , Heightmap.Biome.DeepNorth => 6
+        , Heightmap.Biome.AshLands => 7
+        , Heightmap.Biome.None => 0
+        , Heightmap.Biome.BiomesMax => 0
+        , _ => 0
+      };
 
-        case Heightmap.Biome.None:
-        case Heightmap.Biome.BiomesMax:
-        default:
-          value = 0;
-          break;
-      }
-
+      // ReSharper disable once RedundantAssignment
       return value += Convert.ToInt16(add);
     }
 
     private static int GetGold(Heightmap.Biome biome, uint add = 0)
     {
-      int value;
-      switch (biome)
+      var value = biome switch
       {
-        case Heightmap.Biome.Ocean:
-          value = 1;
-          break;
-        case Heightmap.Biome.Meadows:
-        case Heightmap.Biome.BlackForest:
-        case Heightmap.Biome.Swamp:
-        case Heightmap.Biome.Mountain:
-        case Heightmap.Biome.Plains:
-        case Heightmap.Biome.None:
-        case Heightmap.Biome.AshLands:
-        case Heightmap.Biome.DeepNorth:
-        case Heightmap.Biome.Mistlands:
-        case Heightmap.Biome.BiomesMax:
-        default:
-          value = 0;
-          break;
-      }
+        Heightmap.Biome.Ocean => 1
+        , Heightmap.Biome.Meadows => 0
+        , Heightmap.Biome.BlackForest => 0
+        , Heightmap.Biome.Swamp => 0
+        , Heightmap.Biome.Mountain => 0
+        , Heightmap.Biome.Plains => 0
+        , Heightmap.Biome.None => 0
+        , Heightmap.Biome.AshLands => 0
+        , Heightmap.Biome.DeepNorth => 0
+        , Heightmap.Biome.Mistlands => 0
+        , Heightmap.Biome.BiomesMax => 0
+        , _ => 0
+      };
 
+      // ReSharper disable once RedundantAssignment
       return value += Convert.ToInt16(add);
     }
 
@@ -1431,6 +1377,13 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     }
 
     #endregion
+
+    #endregion
+
+    #region Implementation of ITraceableLogging
+
+    /// <inheritdoc />
+    public string Source => Namespace;
 
     #endregion
   }

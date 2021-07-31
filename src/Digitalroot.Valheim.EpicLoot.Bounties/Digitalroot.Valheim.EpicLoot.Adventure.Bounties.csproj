@@ -13,7 +13,7 @@
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <LangVersion>9</LangVersion>
+    <LangVersion>latest</LangVersion>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -83,21 +83,21 @@
       <HintPath>..\packages\Pfhoenix.Valheim.ModProjectReferences.1.0.6\lib\net46\bepinex.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.AssemblyInfo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.AssemblyInfo.1.0.0\lib\net462\Digitalroot.Valheim.Common.AssemblyInfo.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.AssemblyInfo, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.AssemblyInfo.1.0.1\lib\net462\Digitalroot.Valheim.Common.AssemblyInfo.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Core.1.0.0\lib\net462\Digitalroot.Valheim.Common.Core.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Core, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Core.1.0.2\lib\net462\Digitalroot.Valheim.Common.Core.dll</HintPath>
     </Reference>
     <Reference Include="Digitalroot.Valheim.Common.Json, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Digitalroot.Valheim.Common.Json.1.0.2\lib\net462\Digitalroot.Valheim.Common.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.0.3\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.1.1\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.0\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.3\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
     </Reference>
     <Reference Include="EpicLoot">
       <HintPath>..\externals\EpicLoot.dll</HintPath>
