@@ -113,7 +113,24 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     private static void PrintBounties()
     {
       Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
+      // Used for populating the ReadMe Table.
+      // Log.Trace(Instance, "*******************************");
+      //
+      // foreach (var biome in Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>())
+      // {
+      //   Log.Trace(Instance, $"## {biome}");
+      //   Log.Trace(Instance, "<table>");
+      //   Log.Trace(Instance, "<tr><th>TargetID</th><th>Iron</th><th>Gold</th><th>Coins</th><th>Adds</th></tr>");
+      //
+      //   foreach (var bountyTargetConfig in Bounties.Where(b => b.Biome == biome))
+      //   {
+      //     Log.Trace(Instance, $"<tr><td>{bountyTargetConfig.TargetID}</td><td>{bountyTargetConfig.RewardIron}</td><td>{bountyTargetConfig.RewardGold}</td><td>{bountyTargetConfig.RewardCoins}</td><td>{(bountyTargetConfig.Adds.Count == 0 ? ":x:" : ":heavy_check_mark:")}</td></tr>");
+      //   }
+      //   Log.Trace(Instance, "</table>");
+      // }
+
       Log.Trace(Instance, "*******************************");
+
       foreach (var bountyTargetConfig in Bounties)
       {
         Log.Trace(Instance, $"TargetID: {bountyTargetConfig.TargetID}");
