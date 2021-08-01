@@ -16,11 +16,11 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
   [BepInDependency(global::EpicLoot.EpicLoot.PluginId, "0.8.4")]
   public class Main : BaseUnityPlugin, ITraceableLogging
   {
-    public const string Version = "1.1.1";
+    public const string Version = "1.1.2";
     public const string Name = "Digitalroot EpicLoot Adventure Bounties";
     // ReSharper disable once MemberCanBePrivate.Global
     public const string Guid = "digitalroot.mods.epicloot.adventure.bounties";
-    public const string Namespace = nameof(Digitalroot.Valheim.EpicLoot.Adventure.Bounties);
+    public const string Namespace = "Digitalroot.Valheim.EpicLoot." + nameof(Adventure.Bounties);
     private Harmony _harmony;
     public static Main Instance;
     private static List<BountyTargetConfig> Bounties => AdventureDataManager.Config.Bounties.Targets;

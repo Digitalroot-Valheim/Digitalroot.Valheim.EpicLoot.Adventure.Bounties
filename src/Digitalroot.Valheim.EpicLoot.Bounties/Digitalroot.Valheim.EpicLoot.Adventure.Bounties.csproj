@@ -93,8 +93,8 @@
     <Reference Include="Digitalroot.Valheim.Common.Json, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Digitalroot.Valheim.Common.Json.1.0.2\lib\net462\Digitalroot.Valheim.Common.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.1.1\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.1.4\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
     </Reference>
     <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.3\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
