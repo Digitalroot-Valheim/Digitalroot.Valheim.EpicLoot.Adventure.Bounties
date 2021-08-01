@@ -7,6 +7,7 @@ on:
   pull_request:
 jobs:
   build:
+    if: ${{ false }} # disable for now
     runs-on: ubuntu-latest
     env:
       SLN_FILE_NAME: Digitalroot.Valheim.EpicLoot.Adventure.Bounties.sln
@@ -17,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install dotnet
-        uses: actions/setup-dotnet@v1.8.1
+        uses: actions/setup-dotnet@v1
         with:
           source-url: https://nuget.pkg.github.com/Digitalroot-Valheim/index.json
       - name: Restore packages
