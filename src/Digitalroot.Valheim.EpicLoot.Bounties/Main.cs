@@ -16,7 +16,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
   [BepInDependency(global::EpicLoot.EpicLoot.PluginId, "0.8.4")]
   public class Main : BaseUnityPlugin, ITraceableLogging
   {
-    public const string Version = "1.1.2";
+    public const string Version = "1.1.3";
     public const string Name = "Digitalroot EpicLoot Adventure Bounties";
     // ReSharper disable once MemberCanBePrivate.Global
     public const string Guid = "digitalroot.mods.epicloot.adventure.bounties";
@@ -27,6 +27,12 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
     public Main()
     {
+#if DEBUG
+      EnableTrace = true;
+#else
+      EnableTrace = false;
+#endif
+      Log.RegisterSource(this);
       Instance = this;
     }
 
@@ -1401,6 +1407,9 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
     /// <inheritdoc />
     public string Source => Namespace;
+
+    /// <inheritdoc />
+    public bool EnableTrace { get; }
 
     #endregion
   }

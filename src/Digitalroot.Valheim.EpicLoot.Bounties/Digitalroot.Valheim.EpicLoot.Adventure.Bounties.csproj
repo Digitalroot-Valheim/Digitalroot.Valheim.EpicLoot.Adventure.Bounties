@@ -87,17 +87,17 @@
       <HintPath>..\packages\Digitalroot.Valheim.Common.AssemblyInfo.1.0.1\lib\net462\Digitalroot.Valheim.Common.AssemblyInfo.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Core, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Core.1.0.4\lib\net462\Digitalroot.Valheim.Common.Core.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Core, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Core.1.0.5\lib\net462\Digitalroot.Valheim.Common.Core.dll</HintPath>
     </Reference>
     <Reference Include="Digitalroot.Valheim.Common.Json, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Digitalroot.Valheim.Common.Json.1.0.2\lib\net462\Digitalroot.Valheim.Common.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.1.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.1.4\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.1.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.1.6\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.3\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.4\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
     </Reference>
     <Reference Include="EpicLoot">
       <HintPath>..\externals\EpicLoot.dll</HintPath>
