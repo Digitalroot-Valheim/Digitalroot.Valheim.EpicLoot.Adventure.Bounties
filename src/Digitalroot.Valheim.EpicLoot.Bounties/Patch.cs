@@ -10,7 +10,10 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
   public class Patch
   {
     [HarmonyBefore("org.bepinex.plugins.foodstaminaregen")]
-    [HarmonyAfter(global::EpicLoot.EpicLoot.PluginId)]
+    [HarmonyAfter(global::EpicLoot.EpicLoot.PluginId
+      , "som.Bears"
+      , "DYBAssets"
+      )]
     [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.CopyOtherDB))]
     public class PatchObjectDBCopyOtherDB
     {

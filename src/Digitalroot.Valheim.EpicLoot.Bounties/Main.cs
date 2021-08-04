@@ -1,6 +1,6 @@
 ﻿using BepInEx;
 using Digitalroot.Valheim.Common;
-using Digitalroot.Valheim.Common.Core.Enums;
+using Digitalroot.Valheim.Common.Names;
 using EpicLoot.Adventure;
 using HarmonyLib;
 using JetBrains.Annotations;
@@ -14,10 +14,20 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 {
   [BepInPlugin(Guid, Name, Version)]
   [BepInDependency(global::EpicLoot.EpicLoot.PluginId, "0.8.4")]
+  [BepInDependency(DYBAssets, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(CustomRaids, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(SpawnThat, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(RRRCore, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(RRRNpcs, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(RRRMonsters, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(RRRBetterRaids, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(Friendlies, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(Bears, BepInDependency.DependencyFlags.SoftDependency)]
   public class Main : BaseUnityPlugin, ITraceableLogging
   {
-    public const string Version = "1.1.2";
+    public const string Version = "2.0.0";
     public const string Name = "Digitalroot EpicLoot Adventure Bounties";
+
     // ReSharper disable once MemberCanBePrivate.Global
     public const string Guid = "digitalroot.mods.epicloot.adventure.bounties";
     public const string Namespace = "Digitalroot.Valheim.EpicLoot." + nameof(Adventure.Bounties);
@@ -25,14 +35,36 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     public static Main Instance;
     private static List<BountyTargetConfig> Bounties => AdventureDataManager.Config.Bounties.Targets;
 
+    #region Soft Dependencies
+
+    private SoftDependencies _softDependencies;
+
+    // ReSharper disable InconsistentNaming
+    public const string DYBAssets = nameof(DYBAssets);
+    public const string Bears = "som.Bears";
+    public const string Friendlies = "som.Friendlies";
+    public const string CustomRaids = "asharppen.valheim.custom_raids";
+    public const string SpawnThat = "asharppen.valheim.spawn_that";
+    public const string RRRCore = "com.alexanderstrada.rrrcore";
+    public const string RRRNpcs = "com.alexanderstrada.rrrnpcs";
+    public const string RRRMonsters = "com.alexanderstrada.rrrmonsters";
+
+    public const string RRRBetterRaids = "com.alexanderstrada.rrrbetterraids";
+    // ReSharper restore InconsistentNaming
+
+    #endregion
+
     public Main()
     {
       Instance = this;
+      EnableTrace = true;
+      Log.RegisterSource(this);
     }
 
     [UsedImplicitly]
     private void Awake()
     {
+      _softDependencies = new SoftDependencies();
       _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), Guid);
     }
 
@@ -46,8 +78,8 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     {
       try
       {
-        Initialize();
         ClearBounties();
+        Log.Debug(this, _softDependencies.ToString());
         AddBounties();
         PrintBounties();
       }
@@ -57,12 +89,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       }
     }
 
-    private static void Initialize()
-    {
-      GameObjectManager.Instance.Initialize();
-    }
-
-    private static void AddBounties()
+    private void AddBounties()
     {
       if (global::EpicLoot.EpicLoot.IsAdventureModeEnabled())
       {
@@ -73,12 +100,12 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
           var bounties = GetBounties(biome);
           if (bounties != null)
           {
-            Log.Debug(Instance,$"Adding {bounties.Count()} bounties for {biome}");
+            Log.Debug(Instance, $"Adding {bounties.Count()} bounties for {biome}");
             Bounties.AddRange(GetBounties(biome));
           }
           else
           {
-            Log.Debug(Instance,$"No bounties for {biome}");
+            Log.Debug(Instance, $"No bounties for {biome}");
           }
         }
       }
@@ -90,7 +117,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       Bounties.Clear();
     }
 
-    private static IEnumerable<BountyTargetConfig> GetBounties(Heightmap.Biome biome)
+    private IEnumerable<BountyTargetConfig> GetBounties(Heightmap.Biome biome)
     {
       return biome switch
       {
@@ -107,48 +134,6 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         , Heightmap.Biome.BiomesMax => null
         , _ => null
       };
-    }
-
-    [Conditional("DEBUG")]
-    private static void PrintBounties()
-    {
-      Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
-      // Used for populating the ReadMe Table.
-      // Log.Trace(Instance, "*******************************");
-      //
-      // foreach (var biome in Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>())
-      // {
-      //   Log.Trace(Instance, $"## {biome}");
-      //   Log.Trace(Instance, "<table>");
-      //   Log.Trace(Instance, "<tr><th>TargetID</th><th>Iron</th><th>Gold</th><th>Coins</th><th>Adds</th></tr>");
-      //
-      //   foreach (var bountyTargetConfig in Bounties.Where(b => b.Biome == biome))
-      //   {
-      //     Log.Trace(Instance, $"<tr><td>{bountyTargetConfig.TargetID}</td><td>{bountyTargetConfig.RewardIron}</td><td>{bountyTargetConfig.RewardGold}</td><td>{bountyTargetConfig.RewardCoins}</td><td>{(bountyTargetConfig.Adds.Count == 0 ? ":x:" : ":heavy_check_mark:")}</td></tr>");
-      //   }
-      //   Log.Trace(Instance, "</table>");
-      // }
-
-      Log.Trace(Instance, "*******************************");
-
-      foreach (var bountyTargetConfig in Bounties)
-      {
-        Log.Trace(Instance, $"TargetID: {bountyTargetConfig.TargetID}");
-        Log.Trace(Instance, $"Biome: {bountyTargetConfig.Biome}");
-        Log.Trace(Instance, $"RewardCoins: {bountyTargetConfig.RewardCoins}");
-        Log.Trace(Instance, $"RewardIron: {bountyTargetConfig.RewardIron}");
-        Log.Trace(Instance, $"RewardGold: {bountyTargetConfig.RewardGold}");
-        Log.Trace(Instance, "[Adds]");
-        Log.Trace(Instance, $"Adds.Count: {bountyTargetConfig.Adds.Count}");
-
-        foreach (var bountyTargetAddConfig in bountyTargetConfig.Adds)
-        {
-          Log.Trace(Instance, $"Add.ID: {bountyTargetAddConfig.ID}");
-          Log.Trace(Instance, $"Add.Count: {bountyTargetAddConfig.Count}");
-        }
-
-        Log.Trace(Instance, "*******************************");
-      }
     }
 
     private static int GetCoins(Heightmap.Biome biome, uint add = 0)
@@ -199,7 +184,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     {
       var value = biome switch
       {
-        Heightmap.Biome.Ocean => 1
+        Heightmap.Biome.Ocean => 0
         , Heightmap.Biome.Meadows => 0
         , Heightmap.Biome.BlackForest => 0
         , Heightmap.Biome.Swamp => 0
@@ -227,141 +212,143 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Deer), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Deer, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Boar), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Boar, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Boar), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Boar, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Neck), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Neck, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Neck), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Neck, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Greyling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Greyling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Greyling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Greyling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Boar), Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Boar, Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Boar), Count = 2},
+          new() {ID = EnemyNames.Boar, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Neck), Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Neck, Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Neck), Count = 2},
+          new() {ID = EnemyNames.Neck, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GreydwarfShaman), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.GreydwarfShaman, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Greyling), Count = 4},
+          new() {ID = EnemyNames.Greyling, Count = 4},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GreydwarfElite), Biome = biome, RewardCoins = GetCoins(biome, 90), RewardIron = GetIron(biome, 9), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.GreydwarfElite, Biome = biome, RewardCoins = GetCoins(biome, 90), RewardIron = GetIron(biome, 9), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.GreydwarfShaman), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Greydwarf), Count = 4}, new() {ID = GameObjectManager.Get(Enemies.Greyling), Count = 5},
+          new() {ID = EnemyNames.GreydwarfShaman, Count = 2}
+          , new() {ID = EnemyNames.Greydwarf, Count = 4}
+          , new() {ID = EnemyNames.Greyling, Count = 5},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = 0, RewardGold = GetGold(biome, 1)
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = 0, RewardGold = GetGold(biome, 1)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.SkeletonPoison), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.SkeletonPoison, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.SkeletonPoison), Biome = biome, RewardCoins = GetCoins(biome, 20), RewardIron = GetIron(biome), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.SkeletonPoison, Biome = biome, RewardCoins = GetCoins(biome, 20), RewardIron = GetIron(biome), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 4},
+          new() {ID = EnemyNames.Skeleton, Count = 4},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Troll), Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = 0, RewardGold = GetGold(biome, 1)
+        TargetID = EnemyNames.Troll, Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = 0, RewardGold = GetGold(biome, 1)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = 0, RewardGold = GetGold(biome, 1)
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = 0, RewardGold = GetGold(biome, 1)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Lox), Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Lox, Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome)
       };
 
       // Bosses
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Eikthyr), Biome = biome, RewardCoins = GetCoins(biome, 90), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 2),
+        TargetID = BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 90), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 2),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Eikthyr), Biome = biome, RewardCoins = GetCoins(biome, 110), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 110), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 2},
+          new() {ID = BossNames.Eikthyr, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Eikthyr), Biome = biome, RewardCoins = GetCoins(biome, 110), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 110), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Boar), Count = 5}, new() {ID = GameObjectManager.Get(Enemies.Neck), Count = 5},
+          new() {ID = EnemyNames.Boar, Count = 5}, new() {ID = EnemyNames.Neck, Count = 5},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Eikthyr), Biome = biome, RewardCoins = GetCoins(biome, 150), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 5), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 150), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 5), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Boar), Count = 5}, new() {ID = GameObjectManager.Get(Enemies.Neck), Count = 5}, new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 2},
+          new() {ID = EnemyNames.Boar, Count = 5}, new() {ID = EnemyNames.Neck, Count = 5}, new() {ID = BossNames.Eikthyr, Count = 2},
         }
       };
     }
@@ -376,95 +363,95 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Greydwarf), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Greydwarf, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Greydwarf), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Greydwarf, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GreydwarfShaman), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.GreydwarfShaman, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 3},
+          new() {ID = EnemyNames.Skeleton, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GreydwarfElite), Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = 0, RewardGold = GetGold(biome, 1),
+        TargetID = EnemyNames.GreydwarfElite, Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = 0, RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Troll), Biome = biome, RewardCoins = GetCoins(biome, 35), RewardIron = 0, RewardGold = GetGold(biome, 1),
+        TargetID = EnemyNames.Troll, Biome = biome, RewardCoins = GetCoins(biome, 35), RewardIron = 0, RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GreydwarfShaman), Biome = biome, RewardCoins = GetCoins(biome, 25), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.GreydwarfShaman, Biome = biome, RewardCoins = GetCoins(biome, 25), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Greydwarf), Count = 3},
+          new() {ID = EnemyNames.Greydwarf, Count = 3},
         }
       };
 
       // Bosses
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 165), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 2),
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 165), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 2),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 185), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 185), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1},
+          new() {ID = BossNames.Eikthyr, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 205), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 205), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 2},
+          new() {ID = BossNames.Eikthyr, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 205), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 205), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 235), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 235), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1}, new() {ID = BossNames.Eikthyr, Count = 1},
         }
       };
     }
@@ -479,230 +466,234 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Blob), Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Blob, Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Blob), Count = 2},
+          new() {ID = EnemyNames.Blob, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Blob), Count = 1}, new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 1},
+          new() {ID = EnemyNames.Blob, Count = 1}
+          , new() {ID = EnemyNames.Skeleton, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 2},
+          new() {ID = EnemyNames.Skeleton, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 20), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 20), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.SkeletonPoison), Count = 1},
+          new() {ID = EnemyNames.Skeleton, Count = 2}
+          , new() {ID = EnemyNames.SkeletonPoison, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Ghost), Count = 2},
+          new() {ID = EnemyNames.Ghost, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Draugr), Count = 2},
+          new() {ID = EnemyNames.Draugr, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.DraugrRanged), Count = 2},
+          new() {ID = EnemyNames.DraugrRanged, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.BlobElite), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.BlobElite, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Draugr), Count = 1}, new() {ID = GameObjectManager.Get(Enemies.DraugrRanged), Count = 1},
+          new() {ID = EnemyNames.Draugr, Count = 1}
+          , new() {ID = EnemyNames.DraugrRanged, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Leech), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Leech, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = 0, RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = 0, RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Draugr), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Draugr, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Surtling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome),
+        TargetID = EnemyNames.Surtling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Surtling), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Surtling, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Surtling), Count = 2},
+          new() {ID = EnemyNames.Surtling, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = 0, RewardGold = GetGold(biome, 1),
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = 0, RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome, 50), RewardIron = GetIron(biome), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome, 50), RewardIron = GetIron(biome), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Ghost), Count = 2},
+          new() {ID = EnemyNames.Ghost, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.DraugrElite), Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = 0, RewardGold = GetGold(biome, 1),
+        TargetID = EnemyNames.DraugrElite, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = 0, RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.DraugrElite), Biome = biome, RewardCoins = GetCoins(biome, 60), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.DraugrElite, Biome = biome, RewardCoins = GetCoins(biome, 60), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Draugr), Count = 3},
+          new() {ID = EnemyNames.Draugr, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.DraugrElite), Biome = biome, RewardCoins = GetCoins(biome, 60), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.DraugrElite, Biome = biome, RewardCoins = GetCoins(biome, 60), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.DraugrRanged), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Draugr), Count = 1},
+          new() {ID = EnemyNames.DraugrRanged, Count = 2}, new() {ID = EnemyNames.Draugr, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.DraugrElite), Biome = biome, RewardCoins = GetCoins(biome, 60), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.DraugrElite, Biome = biome, RewardCoins = GetCoins(biome, 60), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.DraugrRanged), Count = 3},
+          new() {ID = EnemyNames.DraugrRanged, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.DraugrElite), Biome = biome, RewardCoins = GetCoins(biome, 60), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.DraugrElite, Biome = biome, RewardCoins = GetCoins(biome, 60), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.DraugrRanged), Count = 1}, new() {ID = GameObjectManager.Get(Enemies.Draugr), Count = 2},
+          new() {ID = EnemyNames.DraugrRanged, Count = 1}, new() {ID = EnemyNames.Draugr, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 5},
+          new() {ID = EnemyNames.Skeleton, Count = 5},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.SkeletonPoison), Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.SkeletonPoison, Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 5},
+          new() {ID = EnemyNames.Skeleton, Count = 5},
         }
       };
 
       // Bosses
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 160), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 2),
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 160), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 2),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Eikthyr), Biome = biome, RewardCoins = GetCoins(biome, 100), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1),
+        TargetID = BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 100), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 120), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1),
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 120), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 180), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 180), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1},
+          new() {ID = BossNames.Eikthyr, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 190), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 190), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.DraugrElite), Count = 2},
+          new() {ID = EnemyNames.DraugrElite, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 200), RewardIron = GetIron(biome, 6), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 200), RewardIron = GetIron(biome, 6), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 2},
+          new() {ID = BossNames.Eikthyr, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 190), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 190), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 220), RewardIron = GetIron(biome, 8), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 220), RewardIron = GetIron(biome, 8), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.Eikthyr, Count = 1}
+          , new() {ID = BossNames.TheElder, Count = 1},
         }
       };
     }
@@ -717,167 +708,167 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wolf), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Wolf, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wolf), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Wolf, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Drake), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Drake, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Drake), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Drake, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Surtling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Surtling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.DraugrRanged), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.DraugrRanged, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 3},
+          new() {ID = EnemyNames.Skeleton, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Fenring), Biome = biome, RewardCoins = GetCoins(biome, 20), RewardIron = 0, RewardGold = GetGold(biome, 2)
+        TargetID = EnemyNames.Fenring, Biome = biome, RewardCoins = GetCoins(biome, 20), RewardIron = 0, RewardGold = GetGold(biome, 2)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Fenring), Biome = biome, RewardCoins = GetCoins(biome, 70), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Fenring, Biome = biome, RewardCoins = GetCoins(biome, 70), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Wolf), Count = 3},
+          new() {ID = EnemyNames.Wolf, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wolf), Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Wolf, Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Wolf), Count = 2},
+          new() {ID = EnemyNames.Wolf, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.StoneGolem), Biome = biome, RewardCoins = GetCoins(biome, 50), RewardIron = 0, RewardGold = GetGold(biome, 2)
+        TargetID = EnemyNames.StoneGolem, Biome = biome, RewardCoins = GetCoins(biome, 50), RewardIron = 0, RewardGold = GetGold(biome, 2)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.StoneGolem), Biome = biome, RewardCoins = GetCoins(biome, 130), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.StoneGolem, Biome = biome, RewardCoins = GetCoins(biome, 130), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.StoneGolem), Count = 2},
+          new() {ID = EnemyNames.StoneGolem, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       // Bosses
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Eikthyr), Biome = biome, RewardCoins = GetCoins(biome, 90), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1),
+        TargetID = BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 90), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 110), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 1),
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 110), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 180), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 2),
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 180), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 2),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 200), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 200), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Drake), Count = 2},
+          new() {ID = EnemyNames.Drake, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 200), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 200), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.StoneGolem), Count = 1},
+          new() {ID = EnemyNames.StoneGolem, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 220), RewardIron = GetIron(biome, 6), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 220), RewardIron = GetIron(biome, 6), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Drake), Count = 4},
+          new() {ID = EnemyNames.Drake, Count = 4},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 220), RewardIron = GetIron(biome, 6), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 220), RewardIron = GetIron(biome, 6), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.DraugrRanged), Count = 3},
+          new() {ID = EnemyNames.DraugrRanged, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 210), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 210), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1},
+          new() {ID = BossNames.Eikthyr, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 250), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 250), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1},
         }
       };
     }
@@ -892,284 +883,297 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Goblin), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Goblin, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Goblin), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Goblin, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Goblin), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Goblin, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Drake), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Drake, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Lox), Biome = biome, RewardCoins = GetCoins(biome, 45), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Lox, Biome = biome, RewardCoins = GetCoins(biome, 45), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Surtling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Surtling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.DraugrRanged), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.DraugrRanged, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Skeleton), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Skeleton, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 3},
+          new() {ID = EnemyNames.Skeleton, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Deathsquito), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome),
+        TargetID = EnemyNames.Deathsquito, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Deathsquito), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome),
+        TargetID = EnemyNames.Deathsquito, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Deathsquito), Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Deathsquito, Biome = biome, RewardCoins = GetCoins(biome, 15), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Deathsquito), Count = 2},
+          new() {ID = EnemyNames.Deathsquito, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GoblinBrute), Biome = biome, RewardCoins = GetCoins(biome, 45), RewardIron = 0, RewardGold = GetGold(biome, 3)
+        TargetID = EnemyNames.GoblinBrute, Biome = biome, RewardCoins = GetCoins(biome, 45), RewardIron = 0, RewardGold = GetGold(biome, 3)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GoblinBrute), Biome = biome, RewardCoins = GetCoins(biome, 85), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.GoblinBrute, Biome = biome, RewardCoins = GetCoins(biome, 85), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Goblin), Count = 2},
+          new() {ID = EnemyNames.Goblin, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GoblinBrute), Biome = biome, RewardCoins = GetCoins(biome, 145), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.GoblinBrute, Biome = biome, RewardCoins = GetCoins(biome, 145), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Goblin), Count = 3},
+          new() {ID = EnemyNames.Goblin, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GoblinShaman), Biome = biome, RewardCoins = GetCoins(biome, 165), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.GoblinShaman, Biome = biome, RewardCoins = GetCoins(biome, 165), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Goblin), Count = 3},
+          new() {ID = EnemyNames.Goblin, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.GoblinShaman), Biome = biome, RewardCoins = GetCoins(biome, 215), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.GoblinShaman, Biome = biome, RewardCoins = GetCoins(biome, 215), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.GoblinBrute), Count = 1}, new() {ID = GameObjectManager.Get(Enemies.Goblin), Count = 2},
+          new() {ID = EnemyNames.GoblinBrute, Count = 1}
+          , new() {ID = EnemyNames.Goblin, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       // Bosses
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Eikthyr), Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome), RewardGold = GetGold(biome, 1),
+        TargetID = BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome), RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 1),
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 40), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 1),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.TheElder), Biome = biome, RewardCoins = GetCoins(biome, 50), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.TheElder, Biome = biome, RewardCoins = GetCoins(biome, 50), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 2},
+          new() {ID = BossNames.Eikthyr, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 180), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 180), RewardIron = GetIron(biome, 4), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Drake), Count = 2},
+          new() {ID = EnemyNames.Drake, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 250), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 250), RewardIron = GetIron(biome, 7), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 350), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 6), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 350), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 6), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Bonemass), Count = 1},
+          new() {ID = BossNames.Bonemass, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 350), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 6), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 350), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 6), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1},
+          new() {ID = BossNames.Moder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 300), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 300), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 320), RewardIron = GetIron(biome, 15), RewardGold = GetGold(biome, 5), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 320), RewardIron = GetIron(biome, 15), RewardGold = GetGold(biome, 5), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1}
+          , new() {ID = BossNames.Eikthyr, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Bonemass), Biome = biome, RewardCoins = GetCoins(biome, 500), RewardIron = GetIron(biome, 20), RewardGold = GetGold(biome, 6), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Bonemass, Biome = biome, RewardCoins = GetCoins(biome, 500), RewardIron = GetIron(biome, 20), RewardGold = GetGold(biome, 6), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1}
+          , new() {ID = BossNames.Moder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 500), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 3),
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 500), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 3),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 530), RewardIron = GetIron(biome, 12), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 530), RewardIron = GetIron(biome, 12), RewardGold = GetGold(biome, 3), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1},
+          new() {ID = BossNames.Eikthyr, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 600), RewardIron = GetIron(biome, 20), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 600), RewardIron = GetIron(biome, 20), RewardGold = GetGold(biome, 4), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.TheElder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 800), RewardIron = GetIron(biome, 30), RewardGold = GetGold(biome, 8), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 800), RewardIron = GetIron(biome, 30), RewardGold = GetGold(biome, 8), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Bonemass), Count = 1},
+          new() {ID = BossNames.Bonemass, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 800), RewardIron = GetIron(biome, 30), RewardGold = GetGold(biome, 8), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 800), RewardIron = GetIron(biome, 30), RewardGold = GetGold(biome, 8), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1},
+          new() {ID = BossNames.Moder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 1000), RewardIron = GetIron(biome, 40), RewardGold = GetGold(biome, 10), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 1000), RewardIron = GetIron(biome, 40), RewardGold = GetGold(biome, 10), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.Moder, Count = 1}
+          , new() {ID = BossNames.TheElder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 1000), RewardIron = GetIron(biome, 40), RewardGold = GetGold(biome, 10), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 1000), RewardIron = GetIron(biome, 40), RewardGold = GetGold(biome, 10), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Bonemass), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.Bonemass, Count = 1}
+          , new() {ID = BossNames.TheElder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 1200), RewardIron = GetIron(biome, 50), RewardGold = GetGold(biome, 12), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 1200), RewardIron = GetIron(biome, 50), RewardGold = GetGold(biome, 12), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Bonemass), Count = 1},
+          new() {ID = BossNames.Moder, Count = 1}
+          , new() {ID = BossNames.Bonemass, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 1250), RewardIron = GetIron(biome, 60), RewardGold = GetGold(biome, 13), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 1250), RewardIron = GetIron(biome, 60), RewardGold = GetGold(biome, 13), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Bonemass), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1},
+          new() {ID = BossNames.Moder, Count = 1}
+          , new() {ID = BossNames.Bonemass, Count = 1}
+          , new() {ID = BossNames.Eikthyr, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 1400), RewardIron = GetIron(biome, 70), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 1400), RewardIron = GetIron(biome, 70), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Bonemass), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1},
+          new() {ID = BossNames.Moder, Count = 1}
+          , new() {ID = BossNames.Bonemass, Count = 1}
+          , new() {ID = BossNames.TheElder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Bonemass), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.TheElder), Count = 1}, new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 1},
+          new() {ID = BossNames.Moder, Count = 1}
+          , new() {ID = BossNames.Bonemass, Count = 1}
+          , new() {ID = BossNames.TheElder, Count = 1}
+          , new() {ID = BossNames.Eikthyr, Count = 1},
         }
       };
     }
@@ -1178,14 +1182,35 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
     #region Ocean Bounties
 
-    private static IEnumerable<BountyTargetConfig> GetOceanBounties()
+    private IEnumerable<BountyTargetConfig> GetOceanBounties()
     {
       const Heightmap.Biome biome = Heightmap.Biome.Ocean;
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Serpent), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        TargetID = EnemyNames.Serpent, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1)
       };
+
+      if (_softDependencies.MonsterLabZ)
+      {
+        yield return new BountyTargetConfig
+        {
+          TargetID = MonsterLabZBossNames.Kraken, Biome = biome, RewardCoins = GetCoins(biome, 3000), RewardIron = GetIron(biome, 10), RewardGold = GetGold(biome, 25)
+        };
+      }
+
+      if (_softDependencies.RRRMonsters)
+      {
+        yield return new BountyTargetConfig
+        {
+          TargetID = RRRMonsterNames.StormHatchling, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 1)
+        };
+
+        yield return new BountyTargetConfig
+        {
+          TargetID = RRRMonsterNames.DrownedSoul, Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        };
+      }
     }
 
     #endregion
@@ -1198,42 +1223,42 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Wraith), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 2},
+          new() {ID = EnemyNames.Wraith, Count = 2}, new() {ID = EnemyNames.Skeleton, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Ghost), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Ghost, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Wraith), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 2},
+          new() {ID = EnemyNames.Wraith, Count = 2}, new() {ID = EnemyNames.Skeleton, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Ghost), Count = 4},
+          new() {ID = EnemyNames.Ghost, Count = 4},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Wraith), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Wraith, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Ghost), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 2},
+          new() {ID = EnemyNames.Ghost, Count = 2}, new() {ID = EnemyNames.Skeleton, Count = 2},
         }
       };
 
       // Bosses
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Eikthyr), Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Eikthyr), Count = 5},
+          new() {ID = BossNames.Eikthyr, Count = 5},
         }
       };
     }
@@ -1248,30 +1273,30 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Troll), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome),
+        TargetID = EnemyNames.Troll, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome),
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Troll), Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Troll, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Troll), Count = 1},
+          new() {ID = EnemyNames.Troll, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Troll), Biome = biome, RewardCoins = GetCoins(biome, 20), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Troll, Biome = biome, RewardCoins = GetCoins(biome, 20), RewardIron = GetIron(biome, 3), RewardGold = GetGold(biome, 1), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Troll), Count = 2},
+          new() {ID = EnemyNames.Troll, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Troll), Biome = biome, RewardCoins = GetCoins(biome, 50), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Troll, Biome = biome, RewardCoins = GetCoins(biome, 50), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 2), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Troll), Count = 4},
+          new() {ID = EnemyNames.Troll, Count = 4},
         }
       };
 
@@ -1279,33 +1304,33 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Bosses.Moder), Count = 1},
+          new() {ID = BossNames.Moder, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Troll), Count = 3},
+          new() {ID = EnemyNames.Troll, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.StoneGolem), Count = 2},
+          new() {ID = EnemyNames.StoneGolem, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Moder), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Moder, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Drake), Count = 4},
+          new() {ID = EnemyNames.Drake, Count = 4},
         }
       };
     }
@@ -1320,33 +1345,35 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Surtling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Surtling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Skeleton), Count = 4},
+          new() {ID = EnemyNames.Skeleton, Count = 4},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Surtling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Surtling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Surtling), Count = 3},
+          new() {ID = EnemyNames.Surtling, Count = 3},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Surtling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Surtling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Surtling), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Wraith), Count = 2},
+          new() {ID = EnemyNames.Surtling, Count = 2}
+          , new() {ID = EnemyNames.Wraith, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Enemies.Surtling), Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        TargetID = EnemyNames.Surtling, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Surtling), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Ghost), Count = 2},
+          new() {ID = EnemyNames.Surtling, Count = 2}
+          , new() {ID = EnemyNames.Ghost, Count = 2},
         }
       };
 
@@ -1354,41 +1381,49 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.Surtling), Count = 6},
+          new() {ID = EnemyNames.Surtling, Count = 6},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.GoblinBrute), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.GoblinArcher), Count = 1}, new() {ID = GameObjectManager.Get(Enemies.Goblin), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.GoblinShaman), Count = 2},
+          new() {ID = EnemyNames.GoblinBrute, Count = 2}
+          , new() {ID = EnemyNames.GoblinArcher, Count = 1}
+          , new() {ID = EnemyNames.Goblin, Count = 2}
+          , new() {ID = EnemyNames.GoblinShaman, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.GoblinArcher), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Goblin), Count = 1}, new() {ID = GameObjectManager.Get(Enemies.GoblinShaman), Count = 2},
+          new() {ID = EnemyNames.GoblinArcher, Count = 2}
+          , new() {ID = EnemyNames.Goblin, Count = 1}
+          , new() {ID = EnemyNames.GoblinShaman, Count = 2},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.GoblinArcher), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.Goblin), Count = 2}, new() {ID = GameObjectManager.Get(Enemies.GoblinShaman), Count = 1},
+          new() {ID = EnemyNames.GoblinArcher, Count = 2}
+          , new() {ID = EnemyNames.Goblin, Count = 2}
+          , new() {ID = EnemyNames.GoblinShaman, Count = 1},
         }
       };
 
       yield return new BountyTargetConfig
       {
-        TargetID = GameObjectManager.Get(Bosses.Yagluth), Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
+        TargetID = BossNames.Yagluth, Biome = biome, RewardCoins = GetCoins(biome, 2000), RewardIron = GetIron(biome, 75), RewardGold = GetGold(biome, 15), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = GameObjectManager.Get(Enemies.GoblinBrute), Count = 3}, new() {ID = GameObjectManager.Get(Enemies.GoblinShaman), Count = 1},
+          new() {ID = EnemyNames.GoblinBrute, Count = 3}
+          , new() {ID = EnemyNames.GoblinShaman, Count = 1},
         }
       };
     }
@@ -1402,6 +1437,51 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     /// <inheritdoc />
     public string Source => Namespace;
 
+    /// <inheritdoc />
+    public bool EnableTrace { get; }
+
     #endregion
+
+    [Conditional("DEBUG")]
+    private static void PrintBounties()
+    {
+      Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
+      // Used for populating the ReadMe Table.
+      // Log.Trace(Instance, "*******************************");
+      //
+      // foreach (var biome in Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>())
+      // {
+      //   Log.Trace(Instance, $"## {biome}");
+      //   Log.Trace(Instance, "<table>");
+      //   Log.Trace(Instance, "<tr><th>TargetID</th><th>Iron</th><th>Gold</th><th>Coins</th><th>Adds</th></tr>");
+      //
+      //   foreach (var bountyTargetConfig in Bounties.Where(b => b.Biome == biome))
+      //   {
+      //     Log.Trace(Instance, $"<tr><td>{bountyTargetConfig.TargetID}</td><td>{bountyTargetConfig.RewardIron}</td><td>{bountyTargetConfig.RewardGold}</td><td>{bountyTargetConfig.RewardCoins}</td><td>{(bountyTargetConfig.Adds.Count == 0 ? ":x:" : ":heavy_check_mark:")}</td></tr>");
+      //   }
+      //   Log.Trace(Instance, "</table>");
+      // }
+
+      Log.Trace(Instance, "*******************************");
+
+      //foreach (var bountyTargetConfig in Bounties)
+      //{
+      //  Log.Trace(Instance, $"TargetID: {bountyTargetConfig.TargetID}");
+      //  Log.Trace(Instance, $"Biome: {bountyTargetConfig.Biome}");
+      //  Log.Trace(Instance, $"RewardCoins: {bountyTargetConfig.RewardCoins}");
+      //  Log.Trace(Instance, $"RewardIron: {bountyTargetConfig.RewardIron}");
+      //  Log.Trace(Instance, $"RewardGold: {bountyTargetConfig.RewardGold}");
+      //  Log.Trace(Instance, "[Adds]");
+      //  Log.Trace(Instance, $"Adds.Count: {bountyTargetConfig.Adds.Count}");
+
+      //  foreach (var bountyTargetAddConfig in bountyTargetConfig.Adds)
+      //  {
+      //    Log.Trace(Instance, $"Add.ID: {bountyTargetAddConfig.ID}");
+      //    Log.Trace(Instance, $"Add.Count: {bountyTargetAddConfig.Count}");
+      //  }
+
+      //  Log.Trace(Instance, "*******************************");
+      //}
+    }
   }
 }
