@@ -24,7 +24,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
   [BepInDependency(Bears, BepInDependency.DependencyFlags.SoftDependency)]
   public class Main : BaseUnityPlugin, ITraceableLogging
   {
-    public const string Version = "2.0.0";
+    public const string Version = "2.0.1";
     public const string Name = "Digitalroot EpicLoot Adventure Bounties";
 
     // ReSharper disable once MemberCanBePrivate.Global

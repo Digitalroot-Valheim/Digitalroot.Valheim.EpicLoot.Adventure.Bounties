@@ -26,8 +26,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         , _ => 1
       };
 
-      // ReSharper disable once RedundantAssignment
-      return value += Convert.ToInt16(add);
+      return Convert.ToInt16(add) + value;
     }
 
     protected virtual int GetIron(Heightmap.Biome biome, uint add = 0)
@@ -48,8 +47,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         , _ => 0
       };
 
-      // ReSharper disable once RedundantAssignment
-      return value += Convert.ToInt16(add);
+      return Convert.ToInt16(add) + value;
     }
 
     protected virtual int GetGold(Heightmap.Biome biome, uint add = 0)
@@ -70,8 +68,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         , _ => 0
       };
 
-      // ReSharper disable once RedundantAssignment
-      return value += Convert.ToInt16(add);
+      return Convert.ToInt16(add) + value;
     }
 
     public IEnumerable<BountyTargetConfig> GetBounties(Heightmap.Biome biome)
