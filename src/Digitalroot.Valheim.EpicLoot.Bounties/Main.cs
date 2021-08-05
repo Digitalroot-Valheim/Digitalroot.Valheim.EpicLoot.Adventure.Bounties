@@ -124,6 +124,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
           Bounties.AddRange(bounties);
         }
       }
+      Log.Debug(Instance, $"Loaded Bounties: {Bounties.Count}");
     }
 
     private static void ClearBounties()
@@ -145,7 +146,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     [Conditional("DEBUG")]
     private static void PrintBounties()
     {
-      //Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
+      // Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
       //// Used for populating the ReadMe Table.
       //Log.Trace(Instance, "*******************************");
       

@@ -1,6 +1,7 @@
 # Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
-Adds 160+ bounties to Epic Loot.
+Adds 160+ Vanilla bounties to [Epic Loot](https://www.nexusmods.com/valheim/mods/387).  
+Adds 279 Total bounties with [MonsterLabZ](https://www.nexusmods.com/valheim/mods/1264) and [Monsternomicon](https://www.nexusmods.com/valheim/mods/1166)
 
 [![NuGet Package](https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties/actions/workflows/publish.yml/badge.svg)](https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties/actions/workflows/publish.yml)
 [![CI](https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties/actions/workflows/ci.yml/badge.svg)](https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties/actions/workflows/ci.yml)
