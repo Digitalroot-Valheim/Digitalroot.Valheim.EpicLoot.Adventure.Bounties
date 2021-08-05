@@ -67,6 +67,11 @@ namespace Digitalroot.EpicLoot.Bounties.Example
     {
       try
       {
+        // If disabling the builtin bounties is desired. e.g. Your mod redefines them. Use the following to disabled them.
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisabledAllBuiltinBounties(); // Disable all builtin at once.
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableMonsterLabZBounties(); // Disable only builtin MonsterLabZ
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableRRRMonsterBounties(); // Disable only builtin RRRMonster
+        Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableBearsBounties(); // Disable only builtin Bears
         Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.AddToBountiesCollection(new BearsBounties());
       }
       catch (Exception e)

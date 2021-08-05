@@ -48,7 +48,6 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     public const string RRRCore = "com.alexanderstrada.rrrcore";
     public const string RRRNpcs = "com.alexanderstrada.rrrnpcs";
     public const string RRRMonsters = "com.alexanderstrada.rrrmonsters";
-
     public const string RRRBetterRaids = "com.alexanderstrada.rrrbetterraids";
     // ReSharper restore InconsistentNaming
 
@@ -85,10 +84,10 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       {
         ClearBounties();
         Log.Debug(this, _softDependencies.ToString());
-        AddToBountiesCollection(new VanillaBounties());
-        AddToBountiesCollection(new BearsBounties());
-        AddToBountiesCollection(new MonsterLabZBounties());
-        AddToBountiesCollection(new RRRMonsterBounties());
+        if (_isVanillaBountiesEnabled) AddToBountiesCollection(new VanillaBounties());
+        if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
+        if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
+        if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
         AddBounties();
         PrintBounties();
       }
@@ -140,6 +139,51 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
     /// <inheritdoc />
     public bool EnableTrace { get; }
+
+    #endregion
+
+    #region Bounty Enablement
+
+    private bool _isVanillaBountiesEnabled = true;
+    private bool _isBearsBountiesEnabled = true;
+    private bool _isMonsterLabZBountiesEnabled = true;
+    private bool _isRRRMonsterBountiesEnabled = true;
+
+    /// <summary>
+    /// Disable the builtin Vanilla Bounties
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public void DisableVanillaBounties() => _isVanillaBountiesEnabled = false;
+
+    /// <summary>
+    /// Disable the builtin Bears bounties
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public void DisableBearsBounties() => _isBearsBountiesEnabled = false;
+
+    /// <summary>
+    /// Disable the builtin MonsterLabZ bounties
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public void DisableMonsterLabZBounties() => _isMonsterLabZBountiesEnabled = false;
+
+    /// <summary>
+    /// Disable the builtin RRRMonster bounties
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public void DisableRRRMonsterBounties() => _isRRRMonsterBountiesEnabled = false;
+
+    /// <summary>
+    /// Disable all the builtin bounties
+    /// </summary>
+    [UsedImplicitly]
+    public void DisabledAllBuiltinBounties()
+    {
+      DisableBearsBounties();
+      DisableMonsterLabZBounties();
+      DisableVanillaBounties();
+      DisableRRRMonsterBounties();
+    }
 
     #endregion
 
