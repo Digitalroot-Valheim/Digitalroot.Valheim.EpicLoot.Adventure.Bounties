@@ -414,17 +414,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = RRRMonsterNames.AngrySpirit, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
-      };
-
-      yield return new BountyTargetConfig
-      {
         TargetID = RRRMonsterNames.AngryFrozenCorpse, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
-      };
-
-      yield return new BountyTargetConfig
-      {
-        TargetID = RRRMonsterNames.CalmSpirit, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
       yield return new BountyTargetConfig

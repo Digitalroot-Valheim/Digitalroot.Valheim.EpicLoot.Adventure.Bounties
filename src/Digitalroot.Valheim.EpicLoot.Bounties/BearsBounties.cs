@@ -25,7 +25,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     /// <inheritdoc />
     protected override IEnumerable<BountyTargetConfig> GetMountainBounties()
     {
-      const Heightmap.Biome biome = Heightmap.Biome.Ocean;
+      const Heightmap.Biome biome = Heightmap.Biome.Mountain;
 
       yield return new BountyTargetConfig
       {
@@ -66,7 +66,20 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     protected override IEnumerable<BountyTargetConfig> GetAshLandsBounties() => null;
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetDeepNorthBounties() => null;
+    protected override IEnumerable<BountyTargetConfig> GetDeepNorthBounties()
+    {
+      const Heightmap.Biome biome = Heightmap.Biome.DeepNorth;
+
+      yield return new BountyTargetConfig
+      {
+        TargetID = EnemyNames.Bear, Biome = biome, RewardCoins = GetCoins(biome, 10), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+      };
+
+      yield return new BountyTargetConfig
+      {
+        TargetID = EnemyNames.Bear, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+      };
+    }
 
     #endregion
   }

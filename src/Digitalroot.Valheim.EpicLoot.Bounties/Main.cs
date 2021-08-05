@@ -102,15 +102,20 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     private void AddBounties()
     {
       if (!global::EpicLoot.EpicLoot.IsAdventureModeEnabled()) return;
-      Log.Debug(Instance, "Adding Bounties to EpicLoot");
+      Log.Debug(this, "Adding Bounties to EpicLoot");
+
+      // Log.Trace(this, $"_bountiesList == null : {_bountiesList == null}");
+      // Log.Trace(this, $"_bountiesList.Count : {_bountiesList?.Count}");
 
       foreach (var bountiesCollection in _bountiesList)
       {
+        // Log.Trace(this, $"bountiesCollection.IsDependenciesResolved : {bountiesCollection.IsDependenciesResolved}");
         if (!bountiesCollection.IsDependenciesResolved) continue;
         foreach (var biome in Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>())
         {
-          var bounties = bountiesCollection.GetBounties(biome).ToList();
-          Log.Debug(Instance, $"Adding {bounties.Count} bounties for {biome}");
+          var bounties = bountiesCollection.GetBounties(biome)?.ToList();
+          Log.Debug(Instance, $"Adding {bounties?.Count} bounties for {biome}");
+          if (bounties == null) continue;
           Bounties.AddRange(bounties);
         }
       }
