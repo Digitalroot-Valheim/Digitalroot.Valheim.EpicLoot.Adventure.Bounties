@@ -8,6 +8,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     public SoftDependencies()
     {
       MonsterLabZ = Common.Utils.DoesPluginExist(Main.MonsterLabZ);
+      Bears = Common.Utils.DoesPluginExist(Main.Bears);
       CustomRaids = Common.Utils.DoesPluginExist(Main.CustomRaids);
       SpawnThat = Common.Utils.DoesPluginExist(Main.SpawnThat);
       RRRCore = Common.Utils.DoesPluginExist(Main.RRRCore);
@@ -15,7 +16,6 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       RRRMonsters = Common.Utils.DoesPluginExist(Main.RRRMonsters);
       RRRBetterRaids = Common.Utils.DoesPluginExist(Main.RRRBetterRaids);
       Friendlies = Common.Utils.DoesPluginExist(Main.Friendlies);
-      Bears = Common.Utils.DoesPluginExist(Main.Bears);
     }
 
     public bool MonsterLabZ { get; }

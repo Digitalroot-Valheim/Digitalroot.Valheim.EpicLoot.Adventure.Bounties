@@ -1,6 +1,5 @@
 ﻿using Digitalroot.Valheim.Common.Names;
 using EpicLoot.Adventure;
-using System;
 using System.Collections.Generic;
 
 namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
@@ -1000,19 +999,6 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       {
         TargetID = EnemyNames.Serpent, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome, 2), RewardGold = GetGold(biome, 1)
       };
-
-      if (_softDependencies.RRRMonsters)
-      {
-        yield return new BountyTargetConfig
-        {
-          TargetID = RRRMonsterNames.StormHatchling, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome, 1), RewardGold = GetGold(biome, 1)
-        };
-
-        yield return new BountyTargetConfig
-        {
-          TargetID = RRRMonsterNames.DrownedSoul, Biome = biome, RewardCoins = GetCoins(biome, 5), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
-        };
-      }
     }
 
     #endregion

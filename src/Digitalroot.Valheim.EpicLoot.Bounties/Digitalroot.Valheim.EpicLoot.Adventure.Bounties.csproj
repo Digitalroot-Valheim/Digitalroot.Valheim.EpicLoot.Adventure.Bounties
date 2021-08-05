@@ -370,6 +370,7 @@
     <Compile Include="MonsterLabZBounties.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RRRMonsterBounties.cs" />
     <Compile Include="SoftDependencies.cs" />
     <Compile Include="VanillaBounties.cs" />
   </ItemGroup>
