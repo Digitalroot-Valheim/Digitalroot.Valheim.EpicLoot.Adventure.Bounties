@@ -83,6 +83,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         AddToBountiesCollection(new VanillaBounties());
         AddToBountiesCollection(new BearsBounties());
         AddToBountiesCollection(new MonsterLabZBounties());
+        AddToBountiesCollection(new RRRMonsterBounties());
         AddBounties();
         PrintBounties();
       }
