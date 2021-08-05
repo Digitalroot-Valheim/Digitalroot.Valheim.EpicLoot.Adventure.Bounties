@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 
 namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 {
@@ -8,7 +7,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
     public SoftDependencies()
     {
-      MonsterLabZ = Common.Utils.DoesPluginExist(Main.DYBAssets);
+      MonsterLabZ = Common.Utils.DoesPluginExist(Main.MonsterLabZ);
       CustomRaids = Common.Utils.DoesPluginExist(Main.CustomRaids);
       SpawnThat = Common.Utils.DoesPluginExist(Main.SpawnThat);
       RRRCore = Common.Utils.DoesPluginExist(Main.RRRCore);

@@ -364,10 +364,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractBounties.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="BearsBounties.cs" />
+    <Compile Include="MonsterLabZBounties.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SoftDependencies.cs" />
+    <Compile Include="VanillaBounties.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xsd">
