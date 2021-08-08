@@ -1,34 +1,28 @@
-﻿using Digitalroot.Valheim.Common;
-using HarmonyLib;
+﻿using HarmonyLib;
 using JetBrains.Annotations;
 using System;
 using System.Reflection;
 
-namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
+namespace Digitalroot.EpicLoot.Bounties.Example
 {
   [UsedImplicitly]
   public class Patch
   {
-    [HarmonyBefore("org.bepinex.plugins.foodstaminaregen")]
-    [HarmonyAfter(global::EpicLoot.EpicLoot.PluginId
-      , "som.Bears"
-      , "DYBAssets"
-      )]
     [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.CopyOtherDB))]
     public class PatchObjectDBCopyOtherDB
     {
       [UsedImplicitly]
       [HarmonyPostfix]
+      [HarmonyBefore(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Guid, Main.DependencyName)]
       [HarmonyPriority(Priority.Normal)]
       // ReSharper disable once InconsistentNaming
       public static void Postfix([NotNull] ref ObjectDB __instance)
       {
         try
         {
-          Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
-          if (!Common.Utils.IsObjectDBReady())
+          if (!IsObjectDBReady())
           {
-            Log.Debug(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] ObjectDB not ready - skipping");
+            Main.Instance.Log.LogDebug($"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] ObjectDB not ready - skipping");
             return;
           }
 
@@ -36,9 +30,14 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         }
         catch (Exception e)
         {
-          Log.Error(Main.Instance, e);
+          Main.Instance.Log.LogError(e);
         }
       }
+    }
+
+    private static bool IsObjectDBReady()
+    {
+      return ObjectDB.instance != null && ObjectDB.instance.m_items.Count != 0 && ObjectDB.instance.GetItemPrefab("Amber") != null;
     }
   }
 }
