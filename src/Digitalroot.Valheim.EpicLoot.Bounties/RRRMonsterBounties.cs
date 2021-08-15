@@ -14,7 +14,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
                                && Common.Utils.DoesPluginExist(Main.RRRCore)
                                && Common.Utils.DoesPluginExist(Main.RRRNpcs)
                                && Common.Utils.DoesPluginExist(Main.RRRBetterRaids)
-                               && Common.Utils.DoesPluginExist(Main.Friendlies);
+                               ;
     }
 
     #region Overrides of AbstractBounties

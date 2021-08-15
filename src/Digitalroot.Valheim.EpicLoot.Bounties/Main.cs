@@ -20,11 +20,10 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
   [BepInDependency(RRRNpcs, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(RRRMonsters, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(RRRBetterRaids, BepInDependency.DependencyFlags.SoftDependency)]
-  [BepInDependency(Friendlies, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(Bears, BepInDependency.DependencyFlags.SoftDependency)]
   public class Main : BaseUnityPlugin, ITraceableLogging
   {
-    public const string Version = "2.0.3";
+    public const string Version = "2.0.4";
     public const string Name = "Digitalroot EpicLoot Adventure Bounties";
 
     // ReSharper disable once MemberCanBePrivate.Global
@@ -42,7 +41,6 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     // ReSharper disable InconsistentNaming
     public const string MonsterLabZ = "DYBAssets";
     public const string Bears = "som.Bears";
-    public const string Friendlies = "som.Friendlies";
     public const string CustomRaids = "asharppen.valheim.custom_raids";
     public const string SpawnThat = "asharppen.valheim.spawn_that";
     public const string RRRCore = "com.alexanderstrada.rrrcore";
@@ -58,7 +56,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       Instance = this;
 #if DEBUG
       EnableTrace = true;
-      Log.RegisterSource(this);
+      Log.RegisterSource(Instance);
 #else
       EnableTrace = false;
 #endif
@@ -68,6 +66,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     [UsedImplicitly]
     private void Awake()
     {
+      Config.Bind("General", "NexusID", 1401, "Nexus mod ID for updates");
       _softDependencies = new SoftDependencies();
       _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), Guid);
     }
@@ -84,17 +83,21 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       try
       {
         ClearBounties();
-        Log.Debug(this, _softDependencies.ToString());
+        Log.Debug(Instance, _softDependencies.ToString());
         if (_isVanillaBountiesEnabled) AddToBountiesCollection(new VanillaBounties());
+        Log.Trace(Instance, $"_isVanillaBountiesEnabled : {_isVanillaBountiesEnabled}");
         if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
+        Log.Trace(Instance, $"_isBearsBountiesEnabled : {_isBearsBountiesEnabled}");
         if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
+        Log.Trace(Instance, $"_isMonsterLabZBountiesEnabled : {_isMonsterLabZBountiesEnabled}");
         if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
+        Log.Trace(Instance, $"_isRRRMonsterBountiesEnabled : {_isRRRMonsterBountiesEnabled}");
         AddBounties();
         PrintBounties();
       }
       catch (Exception e)
       {
-        Log.Error(this, e);
+        Log.Error(Instance, e);
       }
     }
 
@@ -107,14 +110,18 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     private void AddBounties()
     {
       if (!global::EpicLoot.EpicLoot.IsAdventureModeEnabled()) return;
-      Log.Debug(this, "Adding Bounties to EpicLoot");
+      Log.Debug(Instance, "Adding Bounties to EpicLoot");
 
-      // Log.Trace(this, $"_bountiesList == null : {_bountiesList == null}");
-      // Log.Trace(this, $"_bountiesList.Count : {_bountiesList?.Count}");
-
-      foreach (var bountiesCollection in _bountiesList)
+      Log.Trace(Instance, $"_bountiesList == null : {_bountiesList == null}");
+      if (_bountiesList == null) return;
+      Log.Trace(Instance, $"_bountiesList.Count : {_bountiesList.Count}");
+      
+      foreach (AbstractBounties bountiesCollection in _bountiesList)
       {
-        // Log.Trace(this, $"bountiesCollection.IsDependenciesResolved : {bountiesCollection.IsDependenciesResolved}");
+        Log.Trace(Instance, $"bountiesCollection.GetType().FullName : {bountiesCollection.GetType().FullName}");
+        Log.Trace(Instance, $"bountiesCollection.IsDependenciesResolved : {bountiesCollection.IsDependenciesResolved}");
+        Log.Trace(Instance, bountiesCollection);
+
         if (!bountiesCollection.IsDependenciesResolved) continue;
         foreach (var biome in Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>())
         {

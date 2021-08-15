@@ -26,7 +26,6 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
                                                         && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRCore)
                                                         && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRNpcs)
                                                         && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRBetterRaids)
-                                                        && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.Friendlies)
                                                         && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.MonsterLabZ)
         ;
     }

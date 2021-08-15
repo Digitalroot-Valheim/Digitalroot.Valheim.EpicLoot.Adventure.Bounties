@@ -15,7 +15,6 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       RRRNpcs = Common.Utils.DoesPluginExist(Main.RRRNpcs);
       RRRMonsters = Common.Utils.DoesPluginExist(Main.RRRMonsters);
       RRRBetterRaids = Common.Utils.DoesPluginExist(Main.RRRBetterRaids);
-      Friendlies = Common.Utils.DoesPluginExist(Main.Friendlies);
     }
 
     public bool MonsterLabZ { get; }
@@ -25,7 +24,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     public bool RRRNpcs { get; }
     public bool RRRMonsters { get; }
     public bool RRRBetterRaids { get; }
-    public bool Friendlies { get; }
+    // public bool Friendlies { get; }
     public bool Bears { get; }
 
     #region Overrides of Object
@@ -41,7 +40,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
              $"{nameof(RRRNpcs)} : {RRRNpcs}{Environment.NewLine}" +
              $"{nameof(RRRMonsters)} : {RRRMonsters}{Environment.NewLine}" +
              $"{nameof(RRRBetterRaids)} : {RRRBetterRaids}{Environment.NewLine}" +
-             $"{nameof(Friendlies)} : {Friendlies}{Environment.NewLine}" +
+//             $"{nameof(Friendlies)} : {Friendlies}{Environment.NewLine}" +
              $"{nameof(Bears)} : {Bears}{Environment.NewLine}";
     }
 
