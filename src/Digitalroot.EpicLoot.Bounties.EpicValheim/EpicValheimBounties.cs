@@ -41,8 +41,8 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         , Heightmap.Biome.Plains => 750
         , Heightmap.Biome.Ocean => 1000
         , Heightmap.Biome.Mistlands => 1000
-        , Heightmap.Biome.AshLands => 1500
         , Heightmap.Biome.DeepNorth => 1250
+        , Heightmap.Biome.AshLands => 1500
         , _ => 0
       };
 
@@ -63,13 +63,13 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
       {
         Heightmap.Biome.Meadows => 0
         , Heightmap.Biome.BlackForest => 0
-        , Heightmap.Biome.Swamp => 0
-        , Heightmap.Biome.Mountain => 1
-        , Heightmap.Biome.Plains => 2
-        , Heightmap.Biome.Ocean => 3
-        , Heightmap.Biome.Mistlands => 3
-        , Heightmap.Biome.AshLands => 5
-        , Heightmap.Biome.DeepNorth => 4
+        , Heightmap.Biome.Swamp => 1
+        , Heightmap.Biome.Mountain => 2
+        , Heightmap.Biome.Plains => 3
+        , Heightmap.Biome.Ocean => 0
+        , Heightmap.Biome.Mistlands => 0
+        , Heightmap.Biome.DeepNorth => 0
+        , Heightmap.Biome.AshLands => 0
         , _ => 0
       };
 
@@ -96,13 +96,13 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
       {
         Heightmap.Biome.Meadows => 0
         , Heightmap.Biome.BlackForest => 0
-        , Heightmap.Biome.Swamp => 1
-        , Heightmap.Biome.Mountain => 2
-        , Heightmap.Biome.Plains => 3
-        , Heightmap.Biome.Ocean => 4
-        , Heightmap.Biome.Mistlands => 4
-        , Heightmap.Biome.AshLands => 6
-        , Heightmap.Biome.DeepNorth => 5
+        , Heightmap.Biome.Swamp => 0
+        , Heightmap.Biome.Mountain => 0
+        , Heightmap.Biome.Plains => 0
+        , Heightmap.Biome.Ocean => 1
+        , Heightmap.Biome.Mistlands => 1
+        , Heightmap.Biome.DeepNorth => 2
+        , Heightmap.Biome.AshLands => 3
         , _ => 0
       };
 
