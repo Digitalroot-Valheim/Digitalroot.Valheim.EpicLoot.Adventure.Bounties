@@ -23,7 +23,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
   [BepInDependency(Bears, BepInDependency.DependencyFlags.SoftDependency)]
   public class Main : BaseUnityPlugin, ITraceableLogging
   {
-    public const string Version = "2.0.4";
+    public const string Version = "2.0.5";
     public const string Name = "Digitalroot EpicLoot Adventure Bounties";
 
     // ReSharper disable once MemberCanBePrivate.Global
@@ -84,13 +84,13 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       {
         ClearBounties();
         Log.Debug(Instance, _softDependencies.ToString());
-        if (_isVanillaBountiesEnabled) AddToBountiesCollection(new VanillaBounties());
+        // if (_isVanillaBountiesEnabled) AddToBountiesCollection(new VanillaBounties());
         Log.Trace(Instance, $"_isVanillaBountiesEnabled : {_isVanillaBountiesEnabled}");
-        if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
+        // if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
         Log.Trace(Instance, $"_isBearsBountiesEnabled : {_isBearsBountiesEnabled}");
         if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
         Log.Trace(Instance, $"_isMonsterLabZBountiesEnabled : {_isMonsterLabZBountiesEnabled}");
-        if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
+        // if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
         Log.Trace(Instance, $"_isRRRMonsterBountiesEnabled : {_isRRRMonsterBountiesEnabled}");
         AddBounties();
         PrintBounties();
