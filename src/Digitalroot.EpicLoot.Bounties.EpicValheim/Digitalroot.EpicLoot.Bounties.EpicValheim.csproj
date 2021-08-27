@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\ILMerge.Fody.1.16.0\build\ILMerge.Fody.props" Condition="Exists('..\packages\ILMerge.Fody.1.16.0\build\ILMerge.Fody.props')" />
+  <Import Project="..\packages\ILMerge.Fody.1.17.0\build\ILMerge.Fody.props" Condition="Exists('..\packages\ILMerge.Fody.1.17.0\build\ILMerge.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -93,11 +93,11 @@
     <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.1.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.1.6\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Names, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Names.1.1.0\lib\net462\Digitalroot.Valheim.Common.Names.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Names, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Names.1.1.1\lib\net462\Digitalroot.Valheim.Common.Names.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.5\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.6\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
     </Reference>
     <Reference Include="EpicLoot">
       <HintPath>..\externals\EpicLoot.dll</HintPath>
@@ -107,8 +107,8 @@
       <HintPath>..\packages\fastJSON.2.4.0.4\lib\net40\fastJSON.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ILMerge, Version=1.16.0.0, Culture=neutral, PublicKeyToken=4d0e9a1cbec0d397, processorArchitecture=MSIL">
-      <HintPath>..\packages\ILMerge.Fody.1.16.0\lib\net45\ILMerge.dll</HintPath>
+    <Reference Include="ILMerge, Version=1.17.0.0, Culture=neutral, PublicKeyToken=4d0e9a1cbec0d397, processorArchitecture=MSIL">
+      <HintPath>..\packages\ILMerge.Fody.1.17.0\lib\net45\ILMerge.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -445,6 +445,6 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.6.5.2\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.6.5.2\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\ILMerge.Fody.1.16.0\build\ILMerge.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.Fody.1.16.0\build\ILMerge.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\ILMerge.Fody.1.17.0\build\ILMerge.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.Fody.1.17.0\build\ILMerge.Fody.props'))" />
   </Target>
 </Project>

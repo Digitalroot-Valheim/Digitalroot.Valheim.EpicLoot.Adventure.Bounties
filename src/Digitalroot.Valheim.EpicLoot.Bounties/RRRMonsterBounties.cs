@@ -77,11 +77,6 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = RRRMonsterNames.BlackSpider, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
-      };
-
-      yield return new BountyTargetConfig
-      {
         TargetID = RRRMonsterNames.ForestSpider, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
       };
 
@@ -303,11 +298,6 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       yield return new BountyTargetConfig
       {
         TargetID = RRRMonsterNames.PoisonDarkSpider, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
-      };
-
-      yield return new BountyTargetConfig
-      {
-        TargetID = RRRMonsterNames.BlackSpider, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = 0
       };
 
       yield return new BountyTargetConfig

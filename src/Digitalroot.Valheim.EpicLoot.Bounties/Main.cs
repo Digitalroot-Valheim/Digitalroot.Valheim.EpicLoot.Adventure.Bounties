@@ -88,9 +88,9 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         Log.Trace(Instance, $"_isVanillaBountiesEnabled : {_isVanillaBountiesEnabled}");
         // if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
         Log.Trace(Instance, $"_isBearsBountiesEnabled : {_isBearsBountiesEnabled}");
-        if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
+        // if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
         Log.Trace(Instance, $"_isMonsterLabZBountiesEnabled : {_isMonsterLabZBountiesEnabled}");
-        // if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
+        if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
         Log.Trace(Instance, $"_isRRRMonsterBountiesEnabled : {_isRRRMonsterBountiesEnabled}");
         AddBounties();
         PrintBounties();
