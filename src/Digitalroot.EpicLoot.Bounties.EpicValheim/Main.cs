@@ -7,14 +7,14 @@ using System;
 namespace Digitalroot.EpicLoot.Bounties.EpicValheim
 {
   [BepInPlugin(Guid, Name, Version)]
-  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Guid, "2.0.5")]
+  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Guid, "2.0.7")]
   [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.MonsterLabZ)]
   [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.CustomRaids)]
   [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.RRRBetterRaids)]
   [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.RRRMonsters)]
   public class Main : BaseUnityPlugin
   {
-    public const string Version = "1.0.3";
+    public const string Version = "1.0.4";
     public const string Name = "Digitalroot Valheim EpicLoot Adventure Bounties for Epic Valheim";
 
     // ReSharper disable MemberCanBePrivate.Global
@@ -43,7 +43,6 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
     {
       try
       {
-        Config.Bind("General", "NexusID", 1401, "Nexus mod ID for updates");
         _harmony = Harmony.CreateAndPatchAll(typeof(Main).Assembly, Guid);
       }
       catch (Exception e)
@@ -66,6 +65,30 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
     }
 
     public void OnObjectDBCopyOtherDB(ref ObjectDB objectDB)
+    {
+      try
+      {
+        LoadBounties();
+      }
+      catch (Exception e)
+      {
+        Log.LogError(e);
+      }
+    }
+
+    public void OnObjectDBAwake(ref ObjectDB objectDB)
+    {
+      try
+      {
+        LoadBounties();
+      }
+      catch (Exception e)
+      {
+        Log.LogError(e);
+      }
+    }
+
+    private void LoadBounties()
     {
       try
       {
