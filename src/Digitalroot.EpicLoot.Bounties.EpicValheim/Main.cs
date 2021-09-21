@@ -7,14 +7,14 @@ using System;
 namespace Digitalroot.EpicLoot.Bounties.EpicValheim
 {
   [BepInPlugin(Guid, Name, Version)]
-  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Guid, "2.0.7")]
+  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Guid, "2.1.0")]
   [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.MonsterLabZ)]
-  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.CustomRaids)]
-  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.RRRBetterRaids)]
+  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.RRRCore)]
   [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.RRRMonsters)]
+  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.SpawnThat)]
   public class Main : BaseUnityPlugin
   {
-    public const string Version = "1.0.4";
+    public const string Version = "1.1.0";
     public const string Name = "Digitalroot Valheim EpicLoot Adventure Bounties for Epic Valheim";
 
     // ReSharper disable MemberCanBePrivate.Global

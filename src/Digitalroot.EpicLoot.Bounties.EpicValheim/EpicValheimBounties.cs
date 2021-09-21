@@ -20,13 +20,13 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
     {
       // Check if Dependent mods are loaded. If there are no dependencies then set IsDependenciesResolved to true;
       // IsDependenciesResolved = true; // Uncomment if there are no dependencies. e.g. Adding more vanilla mobs bounties.
-      IsDependenciesResolved = IsDependenciesResolved = Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRMonsters)
-                                                        && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.CustomRaids)
-                                                        && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.SpawnThat)
-                                                        && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRCore)
-                                                        && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRNpcs)
-                                                        && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRBetterRaids)
-                                                        && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.MonsterLabZ)
+      IsDependenciesResolved = IsDependenciesResolved = Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.MonsterLabZ)
+                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.CustomRaids)
+                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.SpawnThat)
+                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRCore)
+                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRNpcs)
+                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRBetterRaids)
+                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRMonsters)
         ;
     }
 
@@ -182,13 +182,13 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         };
       }
 
-      foreach (var target in RRRMBossNames.AllNamesByBiome(biome))
-      {
-        yield return new BountyTargetConfig
-        {
-          TargetID = target, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
-        };
-      }
+      // foreach (var target in RRRMBossNames.AllNamesByBiome(biome))
+      // {
+      //   yield return new BountyTargetConfig
+      //   {
+      //     TargetID = target, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+      //   };
+      // }
     }
   }
 }

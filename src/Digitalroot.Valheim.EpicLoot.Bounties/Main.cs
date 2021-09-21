@@ -13,18 +13,16 @@ using System.Reflection;
 namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 {
   [BepInPlugin(Guid, Name, Version)]
-  [BepInDependency(global::EpicLoot.EpicLoot.PluginId, "0.8.4")]
-  [BepInDependency(MonsterLabZ, BepInDependency.DependencyFlags.SoftDependency)]
-  [BepInDependency(CustomRaids, BepInDependency.DependencyFlags.SoftDependency)]
-  [BepInDependency(SpawnThat, BepInDependency.DependencyFlags.SoftDependency)]
-  [BepInDependency(RRRCore, BepInDependency.DependencyFlags.SoftDependency)]
-  [BepInDependency(RRRNpcs, BepInDependency.DependencyFlags.SoftDependency)]
-  [BepInDependency(RRRMonsters, BepInDependency.DependencyFlags.SoftDependency)]
-  [BepInDependency(RRRBetterRaids, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(global::EpicLoot.EpicLoot.PluginId, "0.8.6")]
   [BepInDependency(Bears, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(MonsterLabZ, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(RRRCore, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(RRRMonsters, BepInDependency.DependencyFlags.SoftDependency)]
+  // [BepInDependency(RRRNpcs, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(SpawnThat, BepInDependency.DependencyFlags.SoftDependency)]
   public class Main : BaseUnityPlugin, ITraceableLogging
   {
-    public const string Version = "2.0.7";
+    public const string Version = "2.1.0";
     public const string Name = "Digitalroot EpicLoot Adventure Bounties";
 
     // ReSharper disable once MemberCanBePrivate.Global
@@ -33,24 +31,22 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     private Harmony _harmony;
     public static Main Instance;
     private static List<BountyTargetConfig> Bounties => AdventureDataManager.Config.Bounties.Targets;
-    // private static List<BountyTargetConfig> Bounties2 => global::EpicLoot.Adventure.MerchantPanel..Adventure.AdventureDataManager.Config.Bounties.Targets;
 
     private int _bountiesCount;
     private readonly List<AbstractBounties> _bountiesList = new();
 
     #region Soft Dependencies
 
-    private SoftDependencies _softDependencies;
+    internal SoftDependencies SoftDependencies;
 
     // ReSharper disable InconsistentNaming
     public const string MonsterLabZ = "DYBAssets";
     public const string Bears = "som.Bears";
-    public const string CustomRaids = "asharppen.valheim.custom_raids";
     public const string SpawnThat = "asharppen.valheim.spawn_that";
     public const string RRRCore = "com.alexanderstrada.rrrcore";
+    // ReSharper disable once IdentifierTypo
     public const string RRRNpcs = "com.alexanderstrada.rrrnpcs";
     public const string RRRMonsters = "com.alexanderstrada.rrrmonsters";
-    public const string RRRBetterRaids = "com.alexanderstrada.rrrbetterraids";
     // ReSharper restore InconsistentNaming
 
     #endregion
@@ -72,7 +68,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     {
       Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
       Config.Bind("General", "NexusID", 1401, "Nexus mod ID for updates");
-      _softDependencies = new SoftDependencies();
+      SoftDependencies = new SoftDependencies();
       _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), Guid);
     }
 
@@ -84,8 +80,8 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       Log.Trace(Instance, $"_bountiesList == null : {_bountiesList == null}");
       if (_bountiesList == null) return;
       Log.Trace(Instance, $"_bountiesList.Count : {_bountiesList.Count}");
-      
-      foreach (AbstractBounties bountiesCollection in _bountiesList)
+
+      foreach (var bountiesCollection in _bountiesList)
       {
         Log.Trace(Instance, $"bountiesCollection.GetType().FullName : {bountiesCollection.GetType().FullName}");
         Log.Trace(Instance, $"bountiesCollection.IsDependenciesResolved : {bountiesCollection.IsDependenciesResolved}");
@@ -95,8 +91,8 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         {
           var bounties = bountiesCollection.GetBounties(biome)?.ToList();
           if (bounties == null) continue;
-          Log.Debug(Instance, $"Adding {bounties?.Count} bounties for {biome}");
-          Bounties.AddRange(bounties);
+          Log.Debug(Instance, $"Adding {bounties.Count} bounties for {biome}");
+          Bounties.AddRange(bounties.Where(b => !b.TargetID.StartsWith("RRRN_"))); // Disable RRRNPCs
         }
       }
 
@@ -131,17 +127,32 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
           if (IsBountyListCurrent()) return;
           Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] IsBountyListCurrent() : {IsBountyListCurrent()}");
           ClearBounties();
-          Log.Debug(Instance, _softDependencies.ToString());
-          if (_isVanillaBountiesEnabled) AddToBountiesCollection(new VanillaBounties());
-          Log.Trace(Instance, $"_isVanillaBountiesEnabled : {_isVanillaBountiesEnabled}");
-          if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
+          Log.Debug(Instance, SoftDependencies.ToString());
+
           Log.Trace(Instance, $"_isBearsBountiesEnabled : {_isBearsBountiesEnabled}");
-          if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
+          if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
+
+          Log.Trace(Instance, $"_isFriendliesBountiesEnabled : {_isFriendliesBountiesEnabled}");
+          // if (_isFriendliesBountiesEnabled) AddToBountiesCollection(new FriendliesBounties());
+
           Log.Trace(Instance, $"_isMonsterLabZBountiesEnabled : {_isMonsterLabZBountiesEnabled}");
-          if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
+          if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
+
+          Log.Trace(Instance, $"_isMonsternomiconBountiesEnabled : {_isMonsternomiconBountiesEnabled}");
+          if (_isMonsternomiconBountiesEnabled) AddToBountiesCollection(new MonsternomiconBounties());
+
           Log.Trace(Instance, $"_isRRRMonsterBountiesEnabled : {_isRRRMonsterBountiesEnabled}");
+          if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
+
+          Log.Trace(Instance, $"_isSupplementalRaidsBountiesEnabled : {_isSupplementalRaidsBountiesEnabled}");
+          if (_isSupplementalRaidsBountiesEnabled) AddToBountiesCollection(new SupplementalRaidsBounties());
+
+          Log.Trace(Instance, $"_isVanillaBountiesEnabled : {_isVanillaBountiesEnabled}");
+          if (_isVanillaBountiesEnabled) AddToBountiesCollection(new VanillaBounties());
+          
           AddBounties();
-          // PrintBounties();
+          PrintBounties();
+          // PrintBountiesTable();
         }
       }
       catch (Exception e)
@@ -169,6 +180,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     }
 
     // ReSharper disable once UnusedParameter.Global
+    [UsedImplicitly]
     public void OnObjectDBAwake(ref ObjectDB objectDB)
     {
       try
@@ -203,6 +215,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
         Log.Debug(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] MerchantPanel not ready - skipping");
         return;
       }
+
       var merchantPanelLoader = merchantPanel.gameObject.RequireComponent<MerchantPanelLoader>();
       merchantPanelLoader.MerchantPanelCmb = merchantPanel.GetComponent<MerchantPanel>();
     }
@@ -219,16 +232,13 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
     #region Bounty Enablement
 
-    private bool _isVanillaBountiesEnabled = true;
     private bool _isBearsBountiesEnabled = true;
+    private bool _isFriendliesBountiesEnabled = true;
     private bool _isMonsterLabZBountiesEnabled = true;
+    private bool _isMonsternomiconBountiesEnabled = true;
     private bool _isRRRMonsterBountiesEnabled = true;
-
-    /// <summary>
-    /// Disable the builtin Vanilla Bounties
-    /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
-    public void DisableVanillaBounties() => _isVanillaBountiesEnabled = false;
+    private bool _isSupplementalRaidsBountiesEnabled = true;
+    private bool _isVanillaBountiesEnabled = true;
 
     /// <summary>
     /// Disable the builtin Bears bounties
@@ -237,16 +247,40 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     public void DisableBearsBounties() => _isBearsBountiesEnabled = false;
 
     /// <summary>
+    /// Disable the builtin Friendlies bounties
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public void DisableFriendliesBounties() => _isFriendliesBountiesEnabled = false;
+
+    /// <summary>
     /// Disable the builtin MonsterLabZ bounties
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
     public void DisableMonsterLabZBounties() => _isMonsterLabZBountiesEnabled = false;
 
     /// <summary>
+    /// Disable the builtin Monsternomicon bounties
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public void DisableMonsternomiconBounties() => _isMonsternomiconBountiesEnabled = false;
+
+    /// <summary>
     /// Disable the builtin RRRMonster bounties
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
     public void DisableRRRMonsterBounties() => _isRRRMonsterBountiesEnabled = false;
+
+    /// <summary>
+    /// Disable the builtin SupplementalRaids bounties
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public void DisableSupplementalRaidsBounties() => _isSupplementalRaidsBountiesEnabled = false;
+
+    /// <summary>
+    /// Disable the builtin Vanilla Bounties
+    /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
+    public void DisableVanillaBounties() => _isVanillaBountiesEnabled = false;
 
     /// <summary>
     /// Disable all the builtin bounties
@@ -256,9 +290,12 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     {
       Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
       DisableBearsBounties();
+      DisableFriendliesBounties();
       DisableMonsterLabZBounties();
-      DisableVanillaBounties();
+      DisableMonsternomiconBounties();
       DisableRRRMonsterBounties();
+      DisableSupplementalRaidsBounties();
+      DisableVanillaBounties();
     }
 
     #endregion
@@ -266,24 +303,8 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     [Conditional("DEBUG")]
     private static void PrintBounties()
     {
-       Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
+      Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
       // Used for populating the ReadMe Table.
-      Log.Trace(Instance, "*******************************");
-      
-      foreach (var biome in Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>())
-      {
-        Log.Trace(Instance, $"## {biome}");
-        Log.Trace(Instance, "<table>");
-        Log.Trace(Instance, "<tr><th>TargetID</th><th>Iron</th><th>Gold</th><th>Coins</th><th>Adds</th></tr>");
-      
-        foreach (var bountyTargetConfig in Bounties.Where(b => b.Biome == biome))
-        {
-          Log.Trace(Instance, $"<tr><td>{bountyTargetConfig.TargetID}</td><td>{bountyTargetConfig.RewardIron}</td><td>{bountyTargetConfig.RewardGold}</td><td>{bountyTargetConfig.RewardCoins}</td><td>{(bountyTargetConfig.Adds.Count == 0 ? ":x:" : ":heavy_check_mark:")}</td></tr>");
-        }
-        Log.Trace(Instance, "</table>");
-        Log.Trace(Instance, Environment.NewLine);
-      }
-
       Log.Trace(Instance, "*******************************");
 
       foreach (var bountyTargetConfig in Bounties)
@@ -304,6 +325,32 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
         Log.Trace(Instance, "*******************************");
       }
+    }
+
+    [Conditional("DEBUG")]
+    [UsedImplicitly]
+    private static void PrintBountiesTable()
+    {
+      Log.Trace(Instance, $"Loaded Bounties: {Bounties.Count}");
+      // Used for populating the ReadMe Table.
+      Log.Trace(Instance, "*******************************");
+
+      foreach (var biome in Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>())
+      {
+        Log.Trace(Instance, $"## {biome}");
+        Log.Trace(Instance, "<table>");
+        Log.Trace(Instance, "<tr><th>TargetID</th><th>Iron</th><th>Gold</th><th>Coins</th><th>Adds</th></tr>");
+
+        foreach (var bountyTargetConfig in Bounties.Where(b => b.Biome == biome))
+        {
+          Log.Trace(Instance, $"<tr><td>{bountyTargetConfig.TargetID}</td><td>{bountyTargetConfig.RewardIron}</td><td>{bountyTargetConfig.RewardGold}</td><td>{bountyTargetConfig.RewardCoins}</td><td>{(bountyTargetConfig.Adds.Count == 0 ? ":x:" : ":heavy_check_mark:")}</td></tr>");
+        }
+
+        Log.Trace(Instance, "</table>");
+        Log.Trace(Instance, Environment.NewLine);
+      }
+
+      Log.Trace(Instance, "*******************************");
     }
   }
 }

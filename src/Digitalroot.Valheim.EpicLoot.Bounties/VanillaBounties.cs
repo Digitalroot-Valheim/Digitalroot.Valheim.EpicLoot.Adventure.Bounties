@@ -1,4 +1,4 @@
-﻿using Digitalroot.Valheim.Common.Names;
+﻿using Digitalroot.Valheim.Common.Names.Vanilla;
 using EpicLoot.Adventure;
 using System.Collections.Generic;
 

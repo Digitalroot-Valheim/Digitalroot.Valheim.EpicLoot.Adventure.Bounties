@@ -96,20 +96,13 @@ namespace Digitalroot.EpicLoot.Bounties.Example
     {
       const Heightmap.Biome biome = Heightmap.Biome.Mountain;
 
-      yield return new BountyTargetConfig
+      for (var i = 0; i < 3; i++)
       {
-        TargetID = EnemyNames.Bear, Biome = biome, RewardCoins = 50, RewardIron = 4, RewardGold = GetGold(biome)
-      };
-
-      yield return new BountyTargetConfig
-      {
-        TargetID = EnemyNames.Bear, Biome = biome, RewardCoins = 50, RewardIron = 4, RewardGold = GetGold(biome)
-      };
-
-      yield return new BountyTargetConfig
-      {
-        TargetID = EnemyNames.Bear, Biome = biome, RewardCoins = 50, RewardIron = 4, RewardGold = GetGold(biome)
-      };
+        yield return new BountyTargetConfig
+        {
+          TargetID = EnemyNames.Bear, Biome = biome, RewardCoins = 50, RewardIron = 4, RewardGold = GetGold(biome)
+        };
+      }
 
       yield return new BountyTargetConfig
       {
@@ -144,8 +137,8 @@ namespace Digitalroot.EpicLoot.Bounties.Example
         // We want this bounty's RewardGold to be lower then the default of 2, so we skip calling GetGold() and just set it to 1.
         TargetID = EnemyNames.Bear, Biome = biome, RewardCoins = 90, RewardIron = 7, RewardGold = 1, Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = EnemyNames.Bear, Count = 1}
-          , new() {ID = EnemyNames.BearCub, Count = 4}
+          new() { ID = EnemyNames.Bear, Count = 1 }
+          , new() { ID = EnemyNames.BearCub, Count = 4 }
         }
       };
 
@@ -153,7 +146,7 @@ namespace Digitalroot.EpicLoot.Bounties.Example
       {
         TargetID = EnemyNames.Bear, Biome = biome, RewardCoins = 80, RewardIron = 7, RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
-          new() {ID = EnemyNames.Bear, Count = 3},
+          new() { ID = EnemyNames.Bear, Count = 3 },
         }
       };
     }

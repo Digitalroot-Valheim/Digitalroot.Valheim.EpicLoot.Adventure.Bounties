@@ -7,11 +7,11 @@ using System;
 namespace Digitalroot.EpicLoot.Bounties.Example
 {
   [BepInPlugin(Guid, Name, Version)]
-  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Guid, "2.0.1")]
+  [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Guid, "2.1.0")]
   [BepInDependency(DependencyName)]
   public class Main : BaseUnityPlugin
   {
-    public const string Version = "1.0.0";
+    public const string Version = "1.1.0";
     public const string Name = "Digitalroot Valheim EpicLoot Adventure Bounties Sideload Example";
 
     // ReSharper disable MemberCanBePrivate.Global
@@ -68,10 +68,15 @@ namespace Digitalroot.EpicLoot.Bounties.Example
       try
       {
         // If disabling the builtin bounties is desired. e.g. Your mod redefines them. Use the following to disabled them.
-        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisabledAllBuiltinBounties(); // Disable all builtin at once.
-        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableMonsterLabZBounties(); // Disable only builtin MonsterLabZ
-        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableRRRMonsterBounties(); // Disable only builtin RRRMonster
-        Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableBearsBounties(); // Disable only builtin Bears
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisabledAllBuiltinBounties(); // Disable all built in Bounties at once.
+        Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableBearsBounties(); // Disable built in Bears Bounties
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableFriendliesBounties(); // Disable built in Friendlies Bounties
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableMonsterLabZBounties(); // Disable built in MonsterLabZ Bounties
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableMonsternomiconBounties(); // Disable built in Monsternomicon Bounties
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableRRRMonsterBounties(); // Disable built in RRRMonster Bounties
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableSupplementalRaidsBounties(); // Disable built in SupplementalRaids Bounties
+        // Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.DisableVanillaBounties(); // Disable built in Vanilla Bounties
+
         Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Instance.AddToBountiesCollection(new BearsBounties());
       }
       catch (Exception e)
