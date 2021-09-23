@@ -1,8 +1,8 @@
-﻿using Digitalroot.Valheim.Common.Names;
-using Digitalroot.Valheim.EpicLoot.Adventure.Bounties;
+﻿using Digitalroot.Valheim.EpicLoot.Adventure.Bounties;
 using EpicLoot.Adventure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Digitalroot.EpicLoot.Bounties.EpicValheim
 {
@@ -13,21 +13,27 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
   /// </summary>
   public sealed class EpicValheimBounties : AbstractBounties
   {
-    /// <summary>
-    /// ctor
-    /// </summary>
-    public EpicValheimBounties()
+    /// <inheritdoc />
+    /// Check if Dependent mods are loaded. If there are no dependencies then set IsDependenciesResolved to true;
+    /// IsDependenciesResolved = true; // Uncomment if there are no dependencies. e.g. Adding more vanilla mobs bounties.
+    public override bool IsDependenciesResolved => Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.Monsternomicon
+                                                   && Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.MonsterLabZ
+                                                   && Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.RRRCore
+                                                   && Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.RRRMonsters
+                                                   ;
+
+
+    protected override IEnumerable<BountyTargetConfig> FilterResults(IEnumerable<BountyTargetConfig> bountyTargetConfigs)
     {
-      // Check if Dependent mods are loaded. If there are no dependencies then set IsDependenciesResolved to true;
-      // IsDependenciesResolved = true; // Uncomment if there are no dependencies. e.g. Adding more vanilla mobs bounties.
-      IsDependenciesResolved = IsDependenciesResolved = Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.MonsterLabZ)
-                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.CustomRaids)
-                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.SpawnThat)
-                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRCore)
-                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRNpcs)
-                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRBetterRaids)
-                                                        // && Valheim.Common.Utils.DoesPluginExist(Valheim.EpicLoot.Adventure.Bounties.Main.RRRMonsters)
-        ;
+      return from target in bountyTargetConfigs
+        where !target.TargetID.Equals(Valheim.Common.Names.MonsterLabZMod.EnemyNames.RainbowButterfly)
+        where !target.TargetID.Equals(Valheim.Common.Names.MonsterLabZMod.EnemyNames.SilkwormButterfly)
+        where !target.TargetID.Equals(Valheim.Common.Names.MonsterLabZMod.EnemyNames.BlackSpider)
+        where !target.TargetID.Equals(Valheim.Common.Names.MonsterLabZMod.EnemyNames.GoblinBoat)
+        where !target.TargetID.Equals(Valheim.Common.Names.MonsterLabZMod.EnemyNames.GoblinShip2)
+        where !target.TargetID.Equals(Valheim.Common.Names.MonsternomiconMod.EnemyNames.AngrySpirit)
+        where !target.TargetID.Equals(Valheim.Common.Names.MonsternomiconMod.EnemyNames.CalmSpirit)
+             select target;
     }
 
     protected override int GetCoins(Heightmap.Biome biome, uint add = 0)
@@ -112,37 +118,37 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
     #region Overrides of AbstractBounties
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetMeadowsBounties() => GetEpicValheimBounties(Heightmap.Biome.Meadows);
+    protected override IEnumerable<BountyTargetConfig> GetMeadowsBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.Meadows));
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetBlackForestBounties() => GetEpicValheimBounties(Heightmap.Biome.BlackForest);
+    protected override IEnumerable<BountyTargetConfig> GetBlackForestBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.BlackForest));
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetSwampBounties() => GetEpicValheimBounties(Heightmap.Biome.Swamp);
+    protected override IEnumerable<BountyTargetConfig> GetSwampBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.Swamp));
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetMountainBounties() => GetEpicValheimBounties(Heightmap.Biome.Mountain);
+    protected override IEnumerable<BountyTargetConfig> GetMountainBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.Mountain));
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetPlainsBounties() => GetEpicValheimBounties(Heightmap.Biome.Plains);
+    protected override IEnumerable<BountyTargetConfig> GetPlainsBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.Plains));
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetOceanBounties() => GetEpicValheimBounties(Heightmap.Biome.Ocean);
+    protected override IEnumerable<BountyTargetConfig> GetOceanBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.Ocean));
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetMistlandsBounties() => GetEpicValheimBounties(Heightmap.Biome.Mistlands);
+    protected override IEnumerable<BountyTargetConfig> GetMistlandsBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.Mistlands));
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetAshLandsBounties() => GetEpicValheimBounties(Heightmap.Biome.AshLands);
+    protected override IEnumerable<BountyTargetConfig> GetAshLandsBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.AshLands));
 
     /// <inheritdoc />
-    protected override IEnumerable<BountyTargetConfig> GetDeepNorthBounties() => GetEpicValheimBounties(Heightmap.Biome.DeepNorth);
+    protected override IEnumerable<BountyTargetConfig> GetDeepNorthBounties() => FilterResults(GetEpicValheimBounties(Heightmap.Biome.DeepNorth));
 
     #endregion
-    
+
     private IEnumerable<BountyTargetConfig> GetEpicValheimBounties(Heightmap.Biome biome)
     {
-      foreach (var target in EnemyNames.AllNamesByBiome(biome))
+      foreach (var target in Valheim.Common.Names.Vanilla.EnemyNames.AllNamesByBiome(biome))
       {
         yield return new BountyTargetConfig
         {
@@ -150,7 +156,7 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         };
       }
 
-      foreach (var target in BossNames.AllNamesByBiome(biome))
+      foreach (var target in Valheim.Common.Names.Vanilla.BossNames.AllNamesByBiome(biome))
       {
         yield return new BountyTargetConfig
         {
@@ -158,7 +164,7 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         };
       }
 
-      foreach (var target in MonsterLabZMonsterNames.AllNamesByBiome(biome))
+      foreach (var target in Valheim.Common.Names.MonsterLabZMod.EnemyNames.AllNamesByBiome(biome))
       {
         yield return new BountyTargetConfig
         {
@@ -166,7 +172,7 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         };
       }
 
-      foreach (var target in MonsterLabZBossNames.AllNamesByBiome(biome))
+      foreach (var target in Valheim.Common.Names.MonsterLabZMod.BossNames.AllNamesByBiome(biome))
       {
         yield return new BountyTargetConfig
         {
@@ -174,7 +180,7 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         };
       }
 
-      foreach (var target in RRRMonsterNames.AllNamesByBiome(biome))
+      foreach (var target in Valheim.Common.Names.MonsternomiconMod.EnemyNames.AllNamesByBiome(biome))
       {
         yield return new BountyTargetConfig
         {
@@ -182,13 +188,21 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         };
       }
 
-      // foreach (var target in RRRMBossNames.AllNamesByBiome(biome))
-      // {
-      //   yield return new BountyTargetConfig
-      //   {
-      //     TargetID = target, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
-      //   };
-      // }
+      foreach (var target in Valheim.Common.Names.MonsternomiconMod.BossNames.AllNamesByBiome(biome))
+      {
+        yield return new BountyTargetConfig
+        {
+          TargetID = target, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        };
+      }
+
+      foreach (var target in Valheim.Common.Names.RRRMod.EnemyNames.AllNamesByBiome(biome))
+      {
+        yield return new BountyTargetConfig
+        {
+          TargetID = target, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+        };
+      }
     }
   }
 }

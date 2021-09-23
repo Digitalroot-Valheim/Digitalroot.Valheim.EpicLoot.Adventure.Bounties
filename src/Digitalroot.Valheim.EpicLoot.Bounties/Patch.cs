@@ -1,5 +1,4 @@
-﻿using Common;
-using Digitalroot.Valheim.Common;
+﻿using Digitalroot.Valheim.Common;
 using HarmonyLib;
 using JetBrains.Annotations;
 using System;
@@ -14,29 +13,27 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
     [HarmonyAfter(global::EpicLoot.EpicLoot.PluginId
       , "som.Bears"
       , "DYBAssets"
-      )]
-    [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.CopyOtherDB))]
-    public class PatchObjectDBCopyOtherDB
+    )]
+    [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
+    public class PatchZNetSceneAwake
     {
       [UsedImplicitly]
       [HarmonyPostfix]
       [HarmonyPriority(Priority.Normal)]
       // ReSharper disable once InconsistentNaming
-      public static void Postfix([NotNull] ref ObjectDB __instance)
+      public static void Postfix([NotNull] ref ZNetScene __instance)
       {
         try
         {
           Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
 
-          if (Common.Utils.IsHeadless()) return;
-
-          if (!Common.Utils.IsObjectDBReady())
+          if (!Common.Utils.IsZNetSceneReady())
           {
             Log.Debug(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] ObjectDB not ready - skipping");
             return;
           }
 
-          Main.Instance.OnObjectDBCopyOtherDB(ref __instance);
+          Main.Instance.OnPatchZNetSceneAwake(ref __instance);
         }
         catch (Exception e)
         {
@@ -45,13 +42,11 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       }
     }
 
-
     [HarmonyBefore("org.bepinex.plugins.foodstaminaregen")]
     [HarmonyAfter(global::EpicLoot.EpicLoot.PluginId
       , "som.Bears"
       , "DYBAssets"
     )]
-
     [HarmonyPatch(typeof(StoreGui), nameof(StoreGui.Show))]
     public class PatchStoreGuiShow
     {

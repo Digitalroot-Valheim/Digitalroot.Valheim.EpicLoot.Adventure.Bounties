@@ -46,7 +46,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       {
         var current = AdventureDataManager.Config.Bounties.RefreshInterval;
         AdventureDataManager.Config.Bounties.RefreshInterval = -1;
-        IMerchantListPanel panel = MerchantPanelCmb.Panels.FirstOrDefault(p => p.GetType().Name == nameof(AvailableBountiesListPanel));
+        var panel = MerchantPanelCmb.Panels.FirstOrDefault(p => p.GetType().Name == nameof(AvailableBountiesListPanel));
         panel?.RefreshItems(null);
         AdventureDataManager.Config.Bounties.RefreshInterval = current;
       }

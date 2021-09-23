@@ -1,16 +1,38 @@
-﻿using EpicLoot.Adventure;
+﻿using Digitalroot.Valheim.Common;
+using EpicLoot.Adventure;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 {
   public abstract class AbstractBounties
   {
-    public bool IsDependenciesResolved { get; protected set; }
+    protected readonly Func<Heightmap.Biome, IEnumerable<string>> BossNames;
+    protected readonly Func<Heightmap.Biome, IEnumerable<string>> EnemyNames;
+
+    public virtual bool IsDependenciesResolved { get; protected set; }
+    public bool IsLoaded { get; private set; }
+
+    protected AbstractBounties()
+    {
+    }
+
+    protected AbstractBounties(Func<Heightmap.Biome, IEnumerable<string>> enemyNames = null, Func<Heightmap.Biome, IEnumerable<string>> bossNames = null)
+    {
+      EnemyNames = enemyNames;
+      BossNames = bossNames;
+    }
+
+    public void OnLoaded()
+    {
+      Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
+      IsLoaded = true;
+    }
 
     protected virtual int GetCoins(Heightmap.Biome biome, uint add = 0)
     {
-      int value = biome switch
+      var value = biome switch
       {
         Heightmap.Biome.Meadows => 10
         , Heightmap.Biome.BlackForest => 20
@@ -90,14 +112,53 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       };
     }
 
-    protected abstract IEnumerable<BountyTargetConfig> GetMeadowsBounties();
-    protected abstract IEnumerable<BountyTargetConfig> GetBlackForestBounties();
-    protected abstract IEnumerable<BountyTargetConfig> GetSwampBounties();
-    protected abstract IEnumerable<BountyTargetConfig> GetMountainBounties();
-    protected abstract IEnumerable<BountyTargetConfig> GetPlainsBounties();
-    protected abstract IEnumerable<BountyTargetConfig> GetOceanBounties();
-    protected abstract IEnumerable<BountyTargetConfig> GetMistlandsBounties();
-    protected abstract IEnumerable<BountyTargetConfig> GetAshLandsBounties();
-    protected abstract IEnumerable<BountyTargetConfig> GetDeepNorthBounties();
+    private IEnumerable<BountyTargetConfig> GetBountiesByBiome(Heightmap.Biome biome)
+    {
+      if (EnemyNames != null)
+      {
+        foreach (var target in EnemyNames(biome))
+        {
+          yield return new BountyTargetConfig
+          {
+            TargetID = target
+            , Biome = biome
+            , RewardCoins = GetCoins(biome)
+            , RewardIron = GetIron(biome)
+            , RewardGold = GetGold(biome)
+          };
+        }
+      }
+
+      if (BossNames == null) yield break;
+
+      foreach (var target in BossNames(biome))
+      {
+        yield return new BountyTargetConfig
+        {
+          TargetID = target
+          , Biome = biome
+          , RewardCoins = GetCoins(biome)
+          , RewardIron = GetIron(biome)
+          , RewardGold = GetGold(biome)
+        };
+      }
+    }
+
+    /// <summary>
+    /// Filter the bounty collection
+    /// </summary>
+    /// <param name="bountyTargetConfigs">Unfiltered bounty collection</param>
+    /// <returns>Filtered bounty collection</returns>
+    protected virtual IEnumerable<BountyTargetConfig> FilterResults(IEnumerable<BountyTargetConfig> bountyTargetConfigs) => bountyTargetConfigs;
+
+    protected virtual IEnumerable<BountyTargetConfig> GetMeadowsBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.Meadows));
+    protected virtual IEnumerable<BountyTargetConfig> GetBlackForestBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.BlackForest));
+    protected virtual IEnumerable<BountyTargetConfig> GetSwampBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.Swamp));
+    protected virtual IEnumerable<BountyTargetConfig> GetMountainBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.Mountain));
+    protected virtual IEnumerable<BountyTargetConfig> GetPlainsBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.Plains));
+    protected virtual IEnumerable<BountyTargetConfig> GetOceanBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.Ocean));
+    protected virtual IEnumerable<BountyTargetConfig> GetMistlandsBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.Mistlands));
+    protected virtual IEnumerable<BountyTargetConfig> GetAshLandsBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.AshLands));
+    protected virtual IEnumerable<BountyTargetConfig> GetDeepNorthBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.DeepNorth));
   }
 }

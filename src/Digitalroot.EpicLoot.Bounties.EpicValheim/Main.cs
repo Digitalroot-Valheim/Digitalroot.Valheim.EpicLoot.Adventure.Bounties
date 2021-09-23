@@ -64,7 +64,7 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
       }
     }
 
-    public void OnObjectDBCopyOtherDB(ref ObjectDB objectDB)
+    public void OnZNetSceneAwake(ref ZNetScene zNetScene)
     {
       try
       {
@@ -75,19 +75,6 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         Log.LogError(e);
       }
     }
-
-    public void OnObjectDBAwake(ref ObjectDB objectDB)
-    {
-      try
-      {
-        LoadBounties();
-      }
-      catch (Exception e)
-      {
-        Log.LogError(e);
-      }
-    }
-
     private void LoadBounties()
     {
       try

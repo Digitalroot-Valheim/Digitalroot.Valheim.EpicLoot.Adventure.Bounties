@@ -93,11 +93,11 @@
     <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.1.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.1.6\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Names, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Names.1.4.0\lib\net462\Digitalroot.Valheim.Common.Names.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Names, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Names.1.4.1\lib\net462\Digitalroot.Valheim.Common.Names.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.7\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.10\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
     </Reference>
     <Reference Include="EpicLoot">
       <HintPath>..\externals\EpicLoot.dll</HintPath>

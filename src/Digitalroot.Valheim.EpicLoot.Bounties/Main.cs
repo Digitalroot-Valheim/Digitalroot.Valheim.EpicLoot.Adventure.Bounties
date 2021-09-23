@@ -18,7 +18,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
   [BepInDependency(MonsterLabZ, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(RRRCore, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(RRRMonsters, BepInDependency.DependencyFlags.SoftDependency)]
-  // [BepInDependency(RRRNpcs, BepInDependency.DependencyFlags.SoftDependency)]
+  [BepInDependency(RRRNpcs, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(SpawnThat, BepInDependency.DependencyFlags.SoftDependency)]
   public class Main : BaseUnityPlugin, ITraceableLogging
   {
@@ -37,15 +37,17 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
     #region Soft Dependencies
 
-    internal SoftDependencies SoftDependencies;
+    public SoftDependencies SoftDependencies { get; private set; }
 
     // ReSharper disable InconsistentNaming
     public const string MonsterLabZ = "DYBAssets";
     public const string Bears = "som.Bears";
     public const string SpawnThat = "asharppen.valheim.spawn_that";
     public const string RRRCore = "com.alexanderstrada.rrrcore";
+
     // ReSharper disable once IdentifierTypo
     public const string RRRNpcs = "com.alexanderstrada.rrrnpcs";
+
     public const string RRRMonsters = "com.alexanderstrada.rrrmonsters";
     // ReSharper restore InconsistentNaming
 
@@ -83,6 +85,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       foreach (var bountiesCollection in _bountiesList)
       {
+        if (bountiesCollection.IsLoaded) continue;
         Log.Trace(Instance, $"bountiesCollection.GetType().FullName : {bountiesCollection.GetType().FullName}");
         Log.Trace(Instance, $"bountiesCollection.IsDependenciesResolved : {bountiesCollection.IsDependenciesResolved}");
         // Log.Trace(Instance, bountiesCollection);
@@ -94,6 +97,9 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
           Log.Debug(Instance, $"Adding {bounties.Count} bounties for {biome}");
           Bounties.AddRange(bounties.Where(b => !b.TargetID.StartsWith("RRRN_"))); // Disable RRRNPCs
         }
+
+        // Mark the bountiesCollection as loaded
+        bountiesCollection.OnLoaded();
       }
 
       _bountiesCount = Bounties.Count;
@@ -120,36 +126,41 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       try
       {
         Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
-        if (IsBountyListCurrent()) return;
-        Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] IsBountyListCurrent() : {IsBountyListCurrent()}");
+        if (IsBountyListCurrent(out var missingBounties) && missingBounties == null) return;
+
+        Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] IsBountyListCurrent() : {IsBountyListCurrent(out _)}");
         lock (Main.Instance)
         {
-          if (IsBountyListCurrent()) return;
-          Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] IsBountyListCurrent() : {IsBountyListCurrent()}");
-          ClearBounties();
-          Log.Debug(Instance, SoftDependencies.ToString());
+          if (IsBountyListCurrent(out missingBounties) && missingBounties == null) return;
+          Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] IsBountyListCurrent() : {IsBountyListCurrent(out _)}");
 
+          Log.Trace(Instance, $"********** [Bounties Enabled] **********");
           Log.Trace(Instance, $"_isBearsBountiesEnabled : {_isBearsBountiesEnabled}");
-          if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
-
           Log.Trace(Instance, $"_isFriendliesBountiesEnabled : {_isFriendliesBountiesEnabled}");
-          // if (_isFriendliesBountiesEnabled) AddToBountiesCollection(new FriendliesBounties());
-
           Log.Trace(Instance, $"_isMonsterLabZBountiesEnabled : {_isMonsterLabZBountiesEnabled}");
-          if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
-
           Log.Trace(Instance, $"_isMonsternomiconBountiesEnabled : {_isMonsternomiconBountiesEnabled}");
-          if (_isMonsternomiconBountiesEnabled) AddToBountiesCollection(new MonsternomiconBounties());
-
           Log.Trace(Instance, $"_isRRRMonsterBountiesEnabled : {_isRRRMonsterBountiesEnabled}");
-          if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
-
           Log.Trace(Instance, $"_isSupplementalRaidsBountiesEnabled : {_isSupplementalRaidsBountiesEnabled}");
-          if (_isSupplementalRaidsBountiesEnabled) AddToBountiesCollection(new SupplementalRaidsBounties());
-
           Log.Trace(Instance, $"_isVanillaBountiesEnabled : {_isVanillaBountiesEnabled}");
-          if (_isVanillaBountiesEnabled) AddToBountiesCollection(new VanillaBounties());
-          
+          Log.Debug(Instance, SoftDependencies.ToString());
+          Log.Trace(Instance, $"********** [Bounties Enabled] **********");
+
+          // Initial Load
+          if (_bountiesList.Count == 0)
+          {
+            ClearBounties();
+            if (_isBearsBountiesEnabled) AddToBountiesCollection(new BearsBounties());
+            // if (_isFriendliesBountiesEnabled) AddToBountiesCollection(new FriendliesBounties());
+            if (_isMonsterLabZBountiesEnabled) AddToBountiesCollection(new MonsterLabZBounties());
+            if (_isMonsternomiconBountiesEnabled) AddToBountiesCollection(new MonsternomiconBounties());
+            if (_isRRRMonsterBountiesEnabled) AddToBountiesCollection(new RRRMonsterBounties());
+            if (_isSupplementalRaidsBountiesEnabled) AddToBountiesCollection(new SupplementalRaidsBounties());
+            if (_isVanillaBountiesEnabled) AddToBountiesCollection(new VanillaBounties());
+#if DEBUG
+            AddToBountiesCollection(new DebugBounties());
+#endif
+          }
+
           AddBounties();
           PrintBounties();
           // PrintBountiesTable();
@@ -162,13 +173,23 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       }
     }
 
-    private bool IsBountyListCurrent()
+    private bool IsBountyListCurrent(out IEnumerable<AbstractBounties> missingBounties)
     {
       Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
       Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] _bountiesCount == 0 : {_bountiesCount == 0}");
       Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] _bountiesCount != Bounties.Count : {_bountiesCount != Bounties.Count}");
       Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] _bountiesCount : {_bountiesCount}");
       Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] Bounties.Count : {Bounties.Count}");
+      Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] _bountiesList.Any(bounties => !bounties.IsLoaded && bounties.IsDependenciesResolved) : {_bountiesList.Any(bounties => !bounties.IsLoaded && bounties.IsDependenciesResolved)}");
+
+      missingBounties = _bountiesList.Where(bounties => !bounties.IsLoaded && bounties.IsDependenciesResolved);
+      foreach (AbstractBounties bounties in missingBounties)
+      {
+        Log.Trace(Main.Instance, $"[{MethodBase.GetCurrentMethod().DeclaringType?.Name}] Missing bounties for : {bounties.GetType().Name}");
+      }
+
+      if (_bountiesList.Any(bounties => !bounties.IsLoaded && bounties.IsDependenciesResolved)) return false;
+
       return _bountiesCount != 0 && _bountiesCount == Bounties.Count;
     }
 
@@ -179,22 +200,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
       _harmony?.UnpatchSelf();
     }
 
-    // ReSharper disable once UnusedParameter.Global
-    [UsedImplicitly]
-    public void OnObjectDBAwake(ref ObjectDB objectDB)
-    {
-      try
-      {
-        Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod().DeclaringType?.Name}.{MethodBase.GetCurrentMethod().Name}");
-        ConfigureBounties();
-      }
-      catch (Exception e)
-      {
-        Log.Error(Instance, e);
-      }
-    }
-
-    public void OnObjectDBCopyOtherDB(ref ObjectDB objectDB)
+    public void OnPatchZNetSceneAwake(ref ZNetScene zNetScene)
     {
       try
       {

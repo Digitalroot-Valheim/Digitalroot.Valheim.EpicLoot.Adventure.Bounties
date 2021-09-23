@@ -39,8 +39,8 @@
     <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Pfhoenix.Valheim.ModProjectReferences.1.0.8\lib\net46\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony, Version=2.5.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HarmonyX.2.5.5\lib\net45\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="assembly_googleanalytics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -93,11 +93,11 @@
     <Reference Include="Digitalroot.Valheim.Common.Log, Version=1.1.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Digitalroot.Valheim.Common.Log.1.1.6\lib\net462\Digitalroot.Valheim.Common.Log.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Names, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Names.1.4.0\lib\net462\Digitalroot.Valheim.Common.Names.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Names, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Names.1.4.1\lib\net462\Digitalroot.Valheim.Common.Names.dll</HintPath>
     </Reference>
-    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.7\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
+    <Reference Include="Digitalroot.Valheim.Common.Utils, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Digitalroot.Valheim.Common.Utils.1.0.11\lib\net462\Digitalroot.Valheim.Common.Utils.dll</HintPath>
     </Reference>
     <Reference Include="EpicLoot">
       <HintPath>..\externals\EpicLoot.dll</HintPath>
@@ -394,6 +394,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractBounties.cs" />
+    <Compile Include="DebugBounties.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="BearsBounties.cs" />
     <Compile Include="MerchantPanelLoader.cs" />
