@@ -6,6 +6,9 @@ using System;
 
 namespace Digitalroot.EpicLoot.Bounties.Example
 {
+  /// <summary>
+  /// ToDo: This example needs an update post HnH.
+  /// </summary>
   [BepInPlugin(Guid, Name, Version)]
   [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.Guid, "2.1.0")]
   [BepInDependency(DependencyName)]
