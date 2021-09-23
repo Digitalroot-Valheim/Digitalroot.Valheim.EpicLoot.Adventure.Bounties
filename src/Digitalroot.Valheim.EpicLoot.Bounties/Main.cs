@@ -95,7 +95,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
           var bounties = bountiesCollection.GetBounties(biome)?.ToList();
           if (bounties == null) continue;
           Log.Debug(Instance, $"Adding {bounties.Count} bounties for {biome}");
-          Bounties.AddRange(bounties.Where(b => !b.TargetID.StartsWith("RRRN_"))); // Disable RRRNPCs
+          Bounties.AddRange(bounties.Where(b => !b.TargetID.StartsWith("RRRN_"))); // ToDo: Disable RRRNPCs
         }
 
         // Mark the bountiesCollection as loaded
