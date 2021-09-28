@@ -14,7 +14,7 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
   [BepInDependency(Digitalroot.Valheim.EpicLoot.Adventure.Bounties.Main.SpawnThat)]
   public class Main : BaseUnityPlugin
   {
-    public const string Version = "1.1.0";
+    public const string Version = "1.2.1";
     public const string Name = "Digitalroot Valheim EpicLoot Adventure Bounties for Epic Valheim";
 
     // ReSharper disable MemberCanBePrivate.Global

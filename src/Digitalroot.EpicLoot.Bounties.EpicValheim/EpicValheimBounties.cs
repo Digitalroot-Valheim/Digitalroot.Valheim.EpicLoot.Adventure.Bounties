@@ -16,10 +16,7 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
     /// <inheritdoc />
     /// Check if Dependent mods are loaded. If there are no dependencies then set IsDependenciesResolved to true;
     /// IsDependenciesResolved = true; // Uncomment if there are no dependencies. e.g. Adding more vanilla mobs bounties.
-    public override bool IsDependenciesResolved => Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.Monsternomicon
-                                                   && Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.MonsterLabZ
-                                                   && Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.RRRCore
-                                                   && Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.RRRMonsters;
+    public override bool IsDependenciesResolved => true;
 
 
     protected override IEnumerable<BountyTargetConfig> FilterResults(IEnumerable<BountyTargetConfig> bountyTargetConfigs)
@@ -157,13 +154,13 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
         };
       }
 
-      foreach (var target in Valheim.Common.Names.Vanilla.BossNames.AllNamesByBiome(biome))
-      {
-        yield return new BountyTargetConfig
-        {
-          TargetID = target, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
-        };
-      }
+      //foreach (var target in Valheim.Common.Names.Vanilla.BossNames.AllNamesByBiome(biome))
+      //{
+      //  yield return new BountyTargetConfig
+      //  {
+      //    TargetID = target, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+      //  };
+      //}
 
       if (Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.MonsterLabZ)
       {
@@ -211,6 +208,21 @@ namespace Digitalroot.EpicLoot.Bounties.EpicValheim
           yield return new BountyTargetConfig
           {
             TargetID = target, Biome = biome, RewardCoins = GetCoins(biome), RewardIron = GetIron(biome), RewardGold = GetGold(biome)
+          };
+        }
+      }
+
+      if (Valheim.EpicLoot.Adventure.Bounties.Main.Instance.SoftDependencies.Bears)
+      {
+        foreach (var target in Valheim.Common.Names.BearsMod.EnemyNames.AllNamesByBiome(biome))
+        {
+          yield return new BountyTargetConfig
+          {
+            TargetID = target,
+            Biome = biome,
+            RewardCoins = GetCoins(biome),
+            RewardIron = GetIron(biome),
+            RewardGold = GetGold(biome)
           };
         }
       }
