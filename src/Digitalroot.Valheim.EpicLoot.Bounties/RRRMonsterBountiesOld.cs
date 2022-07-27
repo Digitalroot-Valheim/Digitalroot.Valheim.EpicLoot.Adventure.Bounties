@@ -276,7 +276,7 @@ namespace Digitalroot.Valheim.EpicLoot.Adventure.Bounties
 
       yield return new BountyTargetConfig
       {
-        TargetID = RRRMonsterNames.SmallPolarSerpent, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 1)
+        TargetID = RRRMonsterNames.PolarSerpentSmall, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome, 5), RewardGold = GetGold(biome, 1)
       };
     }
 
