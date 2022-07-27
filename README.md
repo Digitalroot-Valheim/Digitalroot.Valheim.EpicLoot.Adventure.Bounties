@@ -196,7 +196,7 @@ Adds 279 Total bounties with [MonsterLabZ](https://www.nexusmods.com/valheim/mod
 <tr><td>Kraken</td><td>24</td><td>25</td><td>3030</td><td>:x:</td></tr>
 <tr><td>RRRM_StormHatchling</td><td>5</td><td>1</td><td>60</td><td>:x:</td></tr>
 <tr><td>RRRM_DrownedSoul</td><td>4</td><td>0</td><td>35</td><td>:x:</td></tr>
-<tr><td>RRRM_SmallPolarSerpent</td><td>9</td><td>1</td><td>60</td><td>:x:</td></tr>
+<tr><td>RRRM_PolarSerpentSmall</td><td>9</td><td>1</td><td>60</td><td>:x:</td></tr>
 </table>
 
 
