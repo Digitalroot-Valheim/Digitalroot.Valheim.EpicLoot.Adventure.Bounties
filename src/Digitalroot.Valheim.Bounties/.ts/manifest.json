@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Digitalroot-Valheim/Digitalroot.Valheim.Common.Interfaces/main/src/json/tsio-manifest.json",
+  "name": "Bounties",
+  "author": "Digitalroot",
+  "description": "Adds 275+ bounties to Epic Loot's Adventure mode.",
+  "version_number": "%VERSION_NUMBER%",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.1901",
+    "RandyKnapp-EpicLoot-0.9.2"
+  ],
+  "website_url": "https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties"
+}

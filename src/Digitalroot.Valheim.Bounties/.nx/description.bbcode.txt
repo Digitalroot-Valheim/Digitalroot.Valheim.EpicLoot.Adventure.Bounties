@@ -1,0 +1,62 @@
+﻿[b][size=4]Digitalroot Valheim Mods[/size][/b]
+[size=3]Mods for Valheim using BepInEx, Harmony[/size]
+
+[b][size=4]License[/size][/b]
+[size=3][url=https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties/blob/main/LICENSE]GNU Affero General Public License v3.0[/url]
+Closed-source license is available for commercial use.[/size]
+
+[b][size=4]Source[/size][/b]
+[size=4][url=https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties]GitHub[/url]
+[/size]
+[b][size=4]Digitalroot's Epic Loot Adventure Bounties[/size][/b]
+
+[size=3]Adds 275+ bounties across all biomes to [url=https://www.nexusmods.com/valheim/mods/387]Epic Loot's[/url] Adventure mode.[/size]
+
+[font=Courier New][size=4][b][color=#ff0000]WARNING:[/color] This mod will remove any bounties added via "adventuredata.json"[/b][/size][/font]
+
+[size=3]I created this because I didn't want to keep merging my custom bounties in "adventuredata.json" every time 
+there was a new release. While it removes the default bounties, they are re-added via the mod.[/size]
+
+[size=4][b]Bounty Details[/b][/size]
+[list]
+[*][size=3][b]Check out the [url=https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties/blob/main/README.md]ReadMe[/url]﻿ for details on what new bounties are added.[/b][/size]
+[*][size=3][b]Vanilla[/b][/size]
+[*][size=3][b]Bears (optional)[/b][/size]
+[*][size=3][b]MonsterLabZ [size=3](optional)[/size][/b][/size]
+[*][size=3][size=3][b]RRRMonster [size=3](optional)[/size][/b][/size][/size]
+[*][size=3][size=3][size=3][b]Monsternomicon [size=3](optional)[/size][/b][/size][/size][/size]
+[/list][size=3][size=3]
+[b][size=4]Dependencies[/size][/b]
+[list]
+[*][size=3][url=https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/]BepInExPack Valheim[/url]﻿[/size]
+[*][size=3][url=https://www.nexusmods.com/valheim/mods/387]Epic Loot[/url]﻿[/size]
+[/list]
+[b][size=4]Installation (manual)[/size][/b]
+[list=1]
+[*][size=3]Download the latest release archive (zip) file.[/size]
+[*][size=3]Extract the archive into <Steam Location>\steamapps\common\Valheim\BepInEx\plugins[/size]
+[/list]
+[b][size=4]Configuration[/size][/b]
+[list]
+[*][size=3]No need to configure.[/size]
+[/list]
+[b][size=4]Customize[/size][/b]
+[list]
+[*][size=3]In the files is an example mod template that can be used to add even more bounties.[/size]
+[*][size=3]There is also the option to disable any of the bounties added by the mod. Incase you want to do a complete override of what is added. This is covered in the example mod.[/size]
+[/list]
+[b][size=4]Issues/Bugs[/size][/b]
+Open an issue or bug on the [url=https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties/issues]issue board[/url]﻿﻿.
+
+[b][size=4]Questions[/size][/b]
+Ask a question on the [url=https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties/discussions]discussions board[/url]﻿﻿.
+
+[b][size=4]Support Me @[/size][/b][/size] [url=https://www.buymeacoffee.com/digitalroot]https://www.buymeacoffee.com/digitalroot[/url]
+
+[b][size=4]Thanks to[/size][/b][/size]
+[list]
+[*][size=3][url=https://github.com/RandyKnapp]RandyKnapp[/url]﻿ and [url=https://github.com/Menthus123]Menthus[/url] for answering my questions.[/size]
+[*][size=3]The [url=https://discord.gg/GUEBuCuAMz]Valheim Discord[/url]﻿ community. [/size]
+[/list]
+[center][size=3][b][color=#00ffff]Digitalroot can be found in the Odin Plus Team Discord[/color][/b][/size]
+[url=https://discord.gg/mbkPcvu9ax][img]https://raw.githubusercontent.com/Digitalroot-Valheim/OdinPlusRemakeJVL/Update/img/index.png[/img][/url]﻿[/center]
