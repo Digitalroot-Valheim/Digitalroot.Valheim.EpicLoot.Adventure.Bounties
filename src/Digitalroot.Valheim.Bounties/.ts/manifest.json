@@ -5,8 +5,8 @@
   "description": "Adds 275+ bounties to Epic Loot's Adventure mode.",
   "version_number": "%VERSION_NUMBER%",
   "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.1901",
-    "RandyKnapp-EpicLoot-0.9.2"
+    "denikson-BepInExPack_Valheim-5.4.2105",
+    "RandyKnapp-EpicLoot-0.9.18"
   ],
   "website_url": "https://github.com/Digitalroot-Valheim/Digitalroot.Valheim.EpicLoot.Adventure.Bounties"
 }

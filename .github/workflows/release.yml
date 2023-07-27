@@ -26,6 +26,8 @@ jobs:
       nexus-api-key: ${{ secrets.NEXUS_API_KEY }}
       nexus-cookie-nxid-header: ${{ secrets.NEXUS_COOKIE_HEADER_NEXUSID }}
       nexus-cookie-sid-header: ${{ secrets.NEXUS_COOKIE_HEADER_SID_DEVELOP }}
+      ts-api-key: ${{ secrets.TS_SERVICEACCOUNT }}
+
     with:
       sln-file-name: Digitalroot.Valheim.Bounties
       proj-file-name: Digitalroot.Valheim.Bounties
@@ -33,3 +35,8 @@ jobs:
       force-assembly-version: true
       nexus-enable-upload: true
       nexus-mod-id: 1401
+      ts-enable-upload: true
+      ts-name: Bounties
+      ts-description: "Adds 275+ bounties to Epic Loot's Adventure mode."
+      ts-categories: "client-side server-side tweaks" #https://thunderstore.io/api/experimental/community/valheim/category/
+      ts-dependencies: denikson-BepInExPack_Valheim@5.4.2105 RandyKnapp-EpicLoot@0.9.18

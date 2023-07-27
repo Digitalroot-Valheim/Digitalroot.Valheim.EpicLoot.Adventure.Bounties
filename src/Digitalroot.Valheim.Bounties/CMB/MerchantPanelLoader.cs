@@ -9,10 +9,11 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Digitalroot.Valheim.Bounties
+namespace Digitalroot.Valheim.Bounties.CMB
 {
   /// <inheritdoc />
   [UsedImplicitly]
+  [Obsolete]
   public class MerchantPanelLoader : MonoBehaviour
   {
     // ReSharper disable once MemberCanBePrivate.Global
@@ -27,6 +28,7 @@ namespace Digitalroot.Valheim.Bounties
     {
       try
       {
+        return;
         Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod()?.DeclaringType?.Name}.{MethodBase.GetCurrentMethod()?.Name}");
         Bounties = AdventureDataManager.Config.Bounties.Targets;
         AdventureDataManagerConfig = AdventureDataManager.Config;

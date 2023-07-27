@@ -1,7 +1,7 @@
 ﻿using EpicLoot.Adventure;
 using System.Collections.Generic;
 
-namespace Digitalroot.Valheim.Bounties
+namespace Digitalroot.Valheim.Bounties.Providers
 {
   public class DebugBounties : AbstractBounties
   {

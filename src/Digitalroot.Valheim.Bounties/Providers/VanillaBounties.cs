@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Digitalroot.Valheim.Bounties
+namespace Digitalroot.Valheim.Bounties.Providers
 {
   public class VanillaBounties : AbstractBounties
   {
@@ -1093,6 +1093,22 @@ namespace Digitalroot.Valheim.Bounties
         TargetID = Common.Names.Vanilla.BossNames.Eikthyr, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
         {
           new() { ID = Common.Names.Vanilla.BossNames.Eikthyr, Count = 5 },
+        }
+      };
+
+      yield return new BountyTargetConfig
+      {
+        TargetID = Common.Names.Vanilla.BossNames.SeekerQueen, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        {
+          new() { ID = Common.Names.Vanilla.BossNames.Eikthyr, Count = 5 },
+        }
+      };
+
+      yield return new BountyTargetConfig
+      {
+        TargetID = Common.Names.Vanilla.BossNames.SeekerQueen, Biome = biome, RewardCoins = GetCoins(biome, 30), RewardIron = GetIron(biome), RewardGold = GetGold(biome), Adds = new List<BountyTargetAddConfig>
+        {
+          new() { ID = Common.Names.Vanilla.BossNames.Bonemass, Count = 1 },
         }
       };
     }

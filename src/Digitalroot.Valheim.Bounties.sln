@@ -24,27 +24,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{BBEA5C97-F
 		..\docs\README.md = ..\docs\README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Digitalroot.Valheim.Bounties", "Digitalroot.Valheim.Bounties\Digitalroot.Valheim.Bounties.csproj", "{5AE284BE-C675-48A2-99AC-330D9CF41986}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digitalroot.Valheim.Bounties", "Digitalroot.Valheim.Bounties\Digitalroot.Valheim.Bounties.csproj", "{5AE284BE-C675-48A2-99AC-330D9CF41986}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{F543E2B5-E7D3-466F-9CFA-53AA7A820CCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{F543E2B5-E7D3-466F-9CFA-53AA7A820CCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		DebugNoDeploy|Any CPU = DebugNoDeploy|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5AE284BE-C675-48A2-99AC-330D9CF41986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5AE284BE-C675-48A2-99AC-330D9CF41986}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5AE284BE-C675-48A2-99AC-330D9CF41986}.DebugNoDeploy|Any CPU.ActiveCfg = DebugNoDeploy|Any CPU
-		{5AE284BE-C675-48A2-99AC-330D9CF41986}.DebugNoDeploy|Any CPU.Build.0 = DebugNoDeploy|Any CPU
 		{5AE284BE-C675-48A2-99AC-330D9CF41986}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AE284BE-C675-48A2-99AC-330D9CF41986}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F543E2B5-E7D3-466F-9CFA-53AA7A820CCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F543E2B5-E7D3-466F-9CFA-53AA7A820CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F543E2B5-E7D3-466F-9CFA-53AA7A820CCE}.DebugNoDeploy|Any CPU.ActiveCfg = Debug|Any CPU
-		{F543E2B5-E7D3-466F-9CFA-53AA7A820CCE}.DebugNoDeploy|Any CPU.Build.0 = Debug|Any CPU
 		{F543E2B5-E7D3-466F-9CFA-53AA7A820CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F543E2B5-E7D3-466F-9CFA-53AA7A820CCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

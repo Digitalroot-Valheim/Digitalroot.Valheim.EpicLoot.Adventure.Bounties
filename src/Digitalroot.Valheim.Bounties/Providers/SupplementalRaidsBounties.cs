@@ -1,4 +1,4 @@
-﻿namespace Digitalroot.Valheim.Bounties
+﻿namespace Digitalroot.Valheim.Bounties.Providers
 {
   public class SupplementalRaidsBounties : AbstractBounties
   {

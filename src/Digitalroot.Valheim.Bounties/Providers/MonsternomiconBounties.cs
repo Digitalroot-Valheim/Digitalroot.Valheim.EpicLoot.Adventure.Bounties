@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Digitalroot.Valheim.Bounties
+namespace Digitalroot.Valheim.Bounties.Providers
 {
   public class MonsternomiconBounties : AbstractBounties
   {

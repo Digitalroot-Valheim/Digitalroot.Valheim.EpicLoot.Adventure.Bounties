@@ -42,32 +42,32 @@ namespace Digitalroot.Valheim.Bounties
       }
     }
 
-    [HarmonyBefore("org.bepinex.plugins.foodstaminaregen")]
-    [HarmonyAfter(EpicLoot.EpicLoot.PluginId
-      , "som.Bears"
-      , "DYBAssets"
-    )]
-    [HarmonyPatch(typeof(StoreGui), nameof(StoreGui.Show))]
-    public class PatchStoreGuiShow
-    {
-      [UsedImplicitly]
-      [HarmonyPostfix]
-      [HarmonyPriority(Priority.Normal)]
-      // ReSharper disable once InconsistentNaming
-      public static void Postfix([NotNull] ref StoreGui __instance)
-      {
-        try
-        {
-          Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod()?.DeclaringType?.Name}.{MethodBase.GetCurrentMethod()?.Name}");
-          if (Common.Utils.IsDedicated) return;
-
-          Main.Instance.OnStoreGuiShow(ref __instance);
-        }
-        catch (Exception e)
-        {
-          Log.Error(Main.Instance, e);
-        }
-      }
-    }
+    // [HarmonyBefore("org.bepinex.plugins.foodstaminaregen")]
+    // [HarmonyAfter(EpicLoot.EpicLoot.PluginId
+    //   , "som.Bears"
+    //   , "DYBAssets"
+    // )]
+    // [HarmonyPatch(typeof(StoreGui), nameof(StoreGui.Show))]
+    // public class PatchStoreGuiShow
+    // {
+    //   [UsedImplicitly]
+    //   [HarmonyPostfix]
+    //   [HarmonyPriority(Priority.Normal)]
+    //   // ReSharper disable once InconsistentNaming
+    //   public static void Postfix([NotNull] ref StoreGui __instance)
+    //   {
+    //     try
+    //     {
+    //       Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod()?.DeclaringType?.Name}.{MethodBase.GetCurrentMethod()?.Name}");
+    //       if (Common.Utils.IsDedicated) return;
+    //
+    //       Main.Instance.OnStoreGuiShow(ref __instance);
+    //     }
+    //     catch (Exception e)
+    //     {
+    //       Log.Error(Main.Instance, e);
+    //     }
+    //   }
+    // }
   }
 }

@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Digitalroot.Valheim.Bounties
+namespace Digitalroot.Valheim.Bounties.Providers
 {
   public abstract class AbstractBounties
   {
-    protected readonly Func<Heightmap.Biome, IEnumerable<string>> BossNames;
-    protected readonly Func<Heightmap.Biome, IEnumerable<string>> EnemyNames;
+    private readonly Func<Heightmap.Biome, IEnumerable<string>> _bossNames;
+    private readonly Func<Heightmap.Biome, IEnumerable<string>> _enemyNames;
 
     public virtual bool IsDependenciesResolved { get; protected set; }
     public bool IsLoaded { get; private set; }
@@ -20,8 +20,8 @@ namespace Digitalroot.Valheim.Bounties
 
     protected AbstractBounties(Func<Heightmap.Biome, IEnumerable<string>> enemyNames = null, Func<Heightmap.Biome, IEnumerable<string>> bossNames = null)
     {
-      EnemyNames = enemyNames;
-      BossNames = bossNames;
+      _enemyNames = enemyNames;
+      _bossNames = bossNames;
     }
 
     public void OnLoaded()
@@ -44,7 +44,6 @@ namespace Digitalroot.Valheim.Bounties
         , Heightmap.Biome.AshLands => 70
         , Heightmap.Biome.DeepNorth => 80
         , Heightmap.Biome.None => 1
-        , Heightmap.Biome.BiomesMax => 1
         , _ => 1
       };
 
@@ -65,7 +64,6 @@ namespace Digitalroot.Valheim.Bounties
         , Heightmap.Biome.AshLands => 6
         , Heightmap.Biome.DeepNorth => 7
         , Heightmap.Biome.None => 0
-        , Heightmap.Biome.BiomesMax => 0
         , _ => 0
       };
 
@@ -86,7 +84,6 @@ namespace Digitalroot.Valheim.Bounties
         , Heightmap.Biome.AshLands => 2
         , Heightmap.Biome.DeepNorth => 2
         , Heightmap.Biome.None => 0
-        , Heightmap.Biome.BiomesMax => 0
         , _ => 0
       };
 
@@ -107,16 +104,15 @@ namespace Digitalroot.Valheim.Bounties
         , Heightmap.Biome.DeepNorth => GetDeepNorthBounties()
         , Heightmap.Biome.Mistlands => GetMistlandsBounties()
         , Heightmap.Biome.None => null
-        , Heightmap.Biome.BiomesMax => null
         , _ => null
       };
     }
 
     private IEnumerable<BountyTargetConfig> GetBountiesByBiome(Heightmap.Biome biome)
     {
-      if (EnemyNames != null)
+      if (_enemyNames != null)
       {
-        foreach (var target in EnemyNames(biome))
+        foreach (var target in _enemyNames(biome))
         {
           yield return new BountyTargetConfig
           {
@@ -129,9 +125,9 @@ namespace Digitalroot.Valheim.Bounties
         }
       }
 
-      if (BossNames == null) yield break;
+      if (_bossNames == null) yield break;
 
-      foreach (var target in BossNames(biome))
+      foreach (var target in _bossNames(biome))
       {
         yield return new BountyTargetConfig
         {
@@ -150,7 +146,6 @@ namespace Digitalroot.Valheim.Bounties
     /// <param name="bountyTargetConfigs">Unfiltered bounty collection</param>
     /// <returns>Filtered bounty collection</returns>
     protected virtual IEnumerable<BountyTargetConfig> FilterResults(IEnumerable<BountyTargetConfig> bountyTargetConfigs) => bountyTargetConfigs;
-
     protected virtual IEnumerable<BountyTargetConfig> GetMeadowsBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.Meadows));
     protected virtual IEnumerable<BountyTargetConfig> GetBlackForestBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.BlackForest));
     protected virtual IEnumerable<BountyTargetConfig> GetSwampBounties() => FilterResults(GetBountiesByBiome(Heightmap.Biome.Swamp));
