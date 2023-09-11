@@ -33,12 +33,6 @@
           "Digitalroot.Valheim.Common.Json": "1.0.32"
         }
       },
-      "Digitalroot.Valheim.Common.ModReferences": {
-        "type": "Direct",
-        "requested": "[1.0.1, )",
-        "resolved": "1.0.1",
-        "contentHash": "VnXkywsYjlN60luKakgPslwtINareK4O/1nu3srhkvrI8rWMITXtXJSkrEvQE4f/h+4lpZA4mrvFisbYdNfV5g=="
-      },
       "Digitalroot.Valheim.Common.Names": {
         "type": "Direct",
         "requested": "[1.4.16, )",
@@ -62,6 +56,12 @@
         "dependencies": {
           "Digitalroot.Valheim.Common.Log": "1.1.44"
         }
+      },
+      "Digitalroot.Valheim.References.EpicLoot": {
+        "type": "Direct",
+        "requested": "[0.9.20, )",
+        "resolved": "0.9.20",
+        "contentHash": "n/qrcWcAH/tNNAvSPdEAOyWXmUR/bUXePcrV/5UmrVIoWG30PVfOlcpHhnIlH5eVqAg0uBLCybCp3C04r8jXrg=="
       },
       "ErrorProne.NET.CoreAnalyzers": {
         "type": "Direct",
