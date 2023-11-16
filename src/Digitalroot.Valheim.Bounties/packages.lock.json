@@ -59,9 +59,9 @@
       },
       "Digitalroot.Valheim.References.EpicLoot": {
         "type": "Direct",
-        "requested": "[0.9.35, )",
-        "resolved": "0.9.35",
-        "contentHash": "O5wGmlYj7xsbp7Pqz7kVk9SWqfEZ6z6Bu95EZBKYO/vwuuy/ztOVgQAVk+5mTgl5zAYEGzo5PnfRP//WWTvF1Q=="
+        "requested": "[0.9.36, )",
+        "resolved": "0.9.36",
+        "contentHash": "Gl1nwiq5ZyckBOVbeACNHIk/qYRTyvzhBNcO0OckENH3n57T8tFS4SEz51sX6oXa6tAOlOIaoMHN3wDb66Wteg=="
       },
       "ErrorProne.NET.CoreAnalyzers": {
         "type": "Direct",
@@ -84,6 +84,15 @@
           "Fody": "6.3.0"
         }
       },
+      "Microsoft.NETFramework.ReferenceAssemblies": {
+        "type": "Direct",
+        "requested": "[1.0.3, )",
+        "resolved": "1.0.3",
+        "contentHash": "vUc9Npcs14QsyOD01tnv/m8sQUnGTGOw1BCmKcv77LBJY7OxhJ+zJF7UD/sCL3lYNFuqmQEVlkfS4Quif6FyYg==",
+        "dependencies": {
+          "Microsoft.NETFramework.ReferenceAssemblies.net48": "1.0.3"
+        }
+      },
       "BepInEx.BaseLib": {
         "type": "Transitive",
         "resolved": "5.4.20",
@@ -92,7 +101,7 @@
       "Digitalroot.References.Unity": {
         "type": "Transitive",
         "resolved": "2022.3.12",
-        "contentHash": "QgMwg+WAnbvmjxSuL+PKjr+35B0FhO0Thw9ddoSBrfBkYsMSCYAqJ0APsN2AQfXn3zVdJgP7Rw2S41DJfuBxRQ=="
+        "contentHash": "LlR803HocdHI0dTL3b1M1kRYuyCxvLh1BsqAeE3KkRIW/s2GHIdeDoWNYxav3IRInYvgHTlKmvXxovqJJeb7ew=="
       },
       "Digitalroot.Valheim.Common.Json": {
         "type": "Transitive",
@@ -116,6 +125,11 @@
         "dependencies": {
           "MonoMod.RuntimeDetour": "21.12.13.1"
         }
+      },
+      "Microsoft.NETFramework.ReferenceAssemblies.net48": {
+        "type": "Transitive",
+        "resolved": "1.0.3",
+        "contentHash": "zMk4D+9zyiEWByyQ7oPImPN/Jhpj166Ky0Nlla4eXlNL8hI/BtSJsgR8Inldd4NNpIAH3oh8yym0W2DrhXdSLQ=="
       },
       "Mono.Cecil": {
         "type": "Transitive",

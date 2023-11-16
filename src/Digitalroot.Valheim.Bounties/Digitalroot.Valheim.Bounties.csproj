@@ -64,7 +64,7 @@
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Digitalroot.Valheim.Common.Utils" Version="1.0.55" />
-    <PackageReference Include="Digitalroot.Valheim.References.EpicLoot" Version="0.9.35" />
+    <PackageReference Include="Digitalroot.Valheim.References.EpicLoot" Version="0.9.36" />
     <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
