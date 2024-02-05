@@ -47,7 +47,7 @@ namespace Digitalroot.Valheim.Bounties
     public SoftDependencies SoftDependencies { get; private set; }
 
     // ReSharper disable InconsistentNaming
-    public const string MonsterLabZ = "DYBAssets";
+    public const string MonsterLabZ = "MonsterLabZ";
     public const string Bears = "som.Bears";
     public const string SpawnThat = "asharppen.valheim.spawn_that";
     public const string RRRCore = "com.alexanderstrada.rrrcore";
