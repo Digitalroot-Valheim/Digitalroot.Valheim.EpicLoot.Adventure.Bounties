@@ -29,11 +29,11 @@ namespace Digitalroot.Valheim.Bounties.CMB
       try
       {
         return;
-        Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod()?.DeclaringType?.Name}.{MethodBase.GetCurrentMethod()?.Name}");
-        Bounties = AdventureDataManager.Config.Bounties.Targets;
-        AdventureDataManagerConfig = AdventureDataManager.Config;
-        UpdateBounties();
-        RefreshBounties();
+        // Log.Trace(Main.Instance, $"{Main.Namespace}.{MethodBase.GetCurrentMethod()?.DeclaringType?.Name}.{MethodBase.GetCurrentMethod()?.Name}");
+        // Bounties = AdventureDataManager.Config.Bounties.Targets;
+        // AdventureDataManagerConfig = AdventureDataManager.Config;
+        // UpdateBounties();
+        // RefreshBounties();
       }
       catch (Exception e)
       {
@@ -44,7 +44,7 @@ namespace Digitalroot.Valheim.Bounties.CMB
     // ReSharper disable once MemberCanBePrivate.Global
     public static void UpdateBounties() => Main.Instance.ConfigureBounties();
 
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [UsedImplicitly]
     public void RefreshBounties()
     {
       try

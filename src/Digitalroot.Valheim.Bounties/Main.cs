@@ -21,7 +21,7 @@ using static Digitalroot.Valheim.Bounties.Extensions.BountyTargetConfigExtension
 namespace Digitalroot.Valheim.Bounties
 {
   [BepInPlugin(Guid, Name, Version)]
-  [BepInDependency(EpicLoot.EpicLoot.PluginId, "0.10.0")]
+  [BepInDependency(EpicLoot.EpicLoot.PluginId, "0.9.39")]
   [BepInDependency(Bears, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(MonsterLabZ, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(RRRCore, BepInDependency.DependencyFlags.SoftDependency)]
@@ -492,7 +492,6 @@ namespace Digitalroot.Valheim.Bounties
       return false;
     }
 
-    [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global")]
     [Obsolete]
     public void OnStoreGuiShow(ref StoreGui storeGui)
     {

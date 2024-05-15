@@ -42,7 +42,7 @@ namespace Digitalroot.Valheim.Bounties.Extensions
 
       public string ToJson()
       {
-        return Common.Json.JsonSerializationProvider.ToJson(this, true);
+        return Common.Json.JsonSerializationProvider.Serialize(this);
       }
     }
   }
