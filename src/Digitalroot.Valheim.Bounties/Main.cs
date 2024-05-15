@@ -21,7 +21,7 @@ using static Digitalroot.Valheim.Bounties.Extensions.BountyTargetConfigExtension
 namespace Digitalroot.Valheim.Bounties
 {
   [BepInPlugin(Guid, Name, Version)]
-  [BepInDependency(EpicLoot.EpicLoot.PluginId, "0.9.35")]
+  [BepInDependency(EpicLoot.EpicLoot.PluginId, "0.10.0")]
   [BepInDependency(Bears, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(MonsterLabZ, BepInDependency.DependencyFlags.SoftDependency)]
   [BepInDependency(RRRCore, BepInDependency.DependencyFlags.SoftDependency)]
